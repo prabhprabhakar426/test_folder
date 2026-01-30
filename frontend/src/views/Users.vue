@@ -40,7 +40,7 @@
         </tr>
 
         <tr v-if="filteredUsers.length === 0">
-          <td colspan="4" class="center">No users found</td>
+          <td colspan="100%" class="center">No users found</td>
         </tr>
       </tbody>
     </table>
@@ -295,6 +295,8 @@ tbody td {
 
 tbody td.center {
   text-align: center;
+  padding: 20px;
+
 }
 
 tbody tr:last-child td {
