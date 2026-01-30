@@ -49,7 +49,7 @@
         </tr>
 
         <tr v-if="searchOrders.length === 0">
-          <td  :colspan="center" class="center">No Orders found</td>
+          <td  colspan="100%" class="center">No Orders found</td>
         </tr>
       </tbody>
     </table>
@@ -239,6 +239,8 @@ tbody td {
 
 tbody td.center {
   text-align: center;
+  padding: 20px;
+
 }
 
 tbody tr:last-child td {
