@@ -164,9 +164,11 @@ import { api } from '../utils/interceptor';
 }
 
 .add-product-card {
-  width: 380px;
+  width: 90%;
+  max-width: 380px;
+  padding: 2rem;
+  box-sizing: border-box;
   background: #fff;
-  padding: 32px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -235,9 +237,9 @@ import { api } from '../utils/interceptor';
 
 .actions {
   display: flex;
+  flex-wrap: wrap; /* buttons will wrap on small width */
+  gap: 0.5rem;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
 }
 
 .primary-btn {
