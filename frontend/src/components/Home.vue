@@ -34,10 +34,10 @@ export default {
   },
   mounted(){
         // send JWT token to verify expiry of token if not use refresh token another token
-        // let tokens = localStorage.getItem('authTokens');
-        // if(!tokens){
-        //     this.$router.push({name:'Login'});
-        // }
+        let tokens = localStorage.getItem('authTokens');
+        if(!tokens){
+            this.$router.push({name:'Login'});
+        }
     },
 }
 </script>
