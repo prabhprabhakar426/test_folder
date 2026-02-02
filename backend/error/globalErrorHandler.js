@@ -12,7 +12,7 @@ const globalErrorHandling = (error, req, res, next)=>{
             message : error.message.split(".")  
         });
     }
-    
+    console.log(error.stack)
     res.status(status).json({
         success : false,
         category,
