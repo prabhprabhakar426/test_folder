@@ -9,9 +9,16 @@ const cookieParser = require('cookie-parser')
 //passing all the methods to variable 'app'
 const app = express();
 
+const allowedOrigins = ['http://localhost:3000' , 'http://192.168.1.209:3000']
 
 const corsOption = {
-    origin:'http://localhost:3000' ,
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin); // return exact origin
+        } else {
+        callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

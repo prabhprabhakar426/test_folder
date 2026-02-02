@@ -32,8 +32,8 @@ const loginUser = async(req, res, next)=>{
         console.log('refresh Token: ' , response.refreshToken)
         res.cookie('refreshToken', response.refreshToken,{
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/'
         });
         console.log(res.cookies)
