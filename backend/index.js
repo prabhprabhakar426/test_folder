@@ -5,6 +5,9 @@ const globalErrorHandling = require("./error/globalErrorHandler");
 const cors = require('cors');
 require('dotenv').config()
 const cookieParser = require('cookie-parser')
+const path = require("path");
+
+
 
 //passing all the methods to variable 'app'
 const app = express();
@@ -39,6 +42,7 @@ app.use('/user', require('./routes/routes_user'));
 app.use('/orders', require('./routes/routes_orders'));
 
 app.use('/inventory', require('./routes/routes_inventory'))
+
 
 app.get('/get',(req, res)=>{
     console.log('get API working');
