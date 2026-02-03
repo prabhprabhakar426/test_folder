@@ -5,44 +5,57 @@
       <h3 class="title">Update Product</h3>
       <p class="subtitle">Product Details</p>
 
-      <div class="field">
-        <span>Product Name: {{ productNameLabel }}</span>
-        <input type="text" 
-            v-model.trim="product.updatedName" 
-            placeholder="Enter new name"/>
-      </div>
+      <form @submit.prevent="confirmUpdate">
 
-      <div class="field">
-        <span>Current Price: {{ priceLabel }}</span>
-        <input type="number" 
-            v-model.lazy.number="product.updatedPrice" 
+        <div class="field">
+          <span>Change Product Name</span>
+          <input
+            type="text"
+            v-model.trim="product.updatedName"
+            placeholder="Enter new name"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <span>Change Price</span>
+          <input
+            type="number"
+            v-model.lazy.number="product.updatedPrice"
             placeholder="Enter updated price"
-            @blur="validPrice"/>
-            <p v-if="priceError">{{ priceError }}</p>
-      </div>
+            required
+            @blur="validPrice"
+          />
+          <p v-if="priceError">{{ priceError }}</p>
+        </div>
 
-      <div class="field">
-        <span>Current Stock: {{ stockLabel }}</span>
-        <input type="number" 
-            v-model.lazy.number="product.updatedTotalStock" 
+        <div class="field">
+          <span>Update Stocks</span>
+          <input
+            type="number"
+            v-model.lazy.number="product.updatedTotalStock"
             @blur="validStock"
-            placeholder="Enter new stocks"/>
-            <p v-if="stockError">{{ stockError }}</p>
-      </div>
+            placeholder="Enter new stocks"
+            required
+          />
+          <p v-if="stockError">{{ stockError }}</p>
+        </div>
 
-      <div class="actions">
-        <button class="primary-btn" @click="confirmUpdate">
-        <!-- <button class="primary-btn" > -->
-          Update
-        </button>
-        <button class="cancel-btn" @click="goBack">
-          Cancel
-        </button>
-      </div>
+        <div class="actions">
+          <button type="submit" class="primary-btn">
+            Update
+          </button>
+          <button type="button" class="cancel-btn" @click="goBack">
+            Cancel
+          </button>
+        </div>
+
+      </form>
 
     </div>
   </div>
 </template>
+
 
 <script>
 // import axios from 'axios';
@@ -62,6 +75,9 @@ export default{
         }
     },
     mounted(){
+      this.product.updatedName = this.productNameLabel;
+      this.product.updatedPrice = this.priceLabel;
+      this.product.updatedTotalStock = this.stockLabel;
     },
     computed:{
       productId(){

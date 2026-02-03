@@ -5,75 +5,75 @@
       <h3 class="title">Add Product</h3>
       <p class="subtitle">Enter product details</p>
 
-      <div class="field">
-        <input
-          type="text"
-          v-model="product.productName"
-          placeholder=" "
-          required
-        />
-        <label>Product Name</label>
-      </div>
+      <form @submit.prevent="addProduct">
 
-      <div class="field">
-        <input
-          type="number"
-          v-model.number="product.price"
-          placeholder=" "
-          required
-          @blur="validPrice"
-        />
-        <label>Price</label>
-        <p v-if="validPrice" >{{ priceError }}</p>
-      </div>
+        <div class="field">
+          <input
+            type="text"
+            v-model="product.productName"
+            placeholder=" "
+            required
+          />
+          <label>Product Name</label>
+        </div>
 
-      <div class="field">
-      <select v-model="product.category" required>
-        <option disabled value="">Select category</option>
-        <option>Electronics</option>
-        <option>Stationary</option>
-        <option>Home Appliances</option>
-        <option>Beauty & Personal</option>
-        <option>Sports Wear</option>
-      </select>
-      <label>Category</label>
-    </div>
+        <div class="field">
+          <input
+            type="number"
+            v-model.number="product.price"
+            placeholder=" "
+            required
+          />
+          <label>Price</label>
+        </div>
 
-      <div class="field">
-        <input
-          type="number"
-          v-model.number="product.totalStock"
-          placeholder=" "
-          required
-          @blur="validStock"
-        />
-        <label>Total Stock</label>
-        <p v-if="stockError" >{{ stockError }}</p>
-      </div>
+        <div class="field">
+          <select v-model="product.category" required>
+            <option disabled value="">Select category</option>
+            <option>Electronics</option>
+            <option>Stationary</option>
+            <option>Home Appliances</option>
+            <option>Beauty & Personal</option>
+            <option>Sports Wear</option>
+          </select>
+          <label>Category</label>
+        </div>
 
-      <div class="field">
-      <input
-        type="file"
-        accept="image/*"
-        @change="onImageChange"
-        required
-      />
-      <label>Product Image</label>
-    </div>
+        <div class="field">
+          <input
+            type="number"
+            v-model.number="product.totalStock"
+            placeholder=" "
+            required
+          />
+          <label>Total Stock</label>
+        </div>
 
+        <div class="field">
+          <input
+            type="file"
+            accept="image/*"
+            @change="onImageChange"
+            required
+          />
+          <label>Product Image</label>
+        </div>
 
-      <div class="actions">
-        <button class="primary-btn" @click="addProduct">
-          Save
-        </button>
-        <button class="cancel-btn" @click="goBack">
-          Cancel
-        </button>
-      </div>
+        <div class="actions">
+          <button type="submit" class="primary-btn">
+            Save
+          </button>
+          <button type="button" class="cancel-btn" @click="goBack">
+            Cancel
+          </button>
+        </div>
+
+      </form>
 
     </div>
   </div>
 </template>
+
 
 <script>
 // import axios from 'axios';
@@ -100,24 +100,7 @@ import { api } from '../utils/interceptor';
         const file = event.target.files[0]
         this.product.image = file
       },
-
-      validPrice(){
-        if (this.product.price == null || this.product.price <= 0) {
-          this.priceError = 'Price must be a positive number';
-          this.product.price = 0; // optional reset
-        } else {
-          this.priceError = '';
-        }
-      },
-
-      validStock(){
-        if (this.product.totalStock == null || this.product.totalStock <= 0) {
-          this.stockError = 'Stock must be a positive number';
-          this.product.totalStock = 0; // optional reset
-        } else {
-          this.stockError = '';
-        }
-      },
+      
       async addProduct() {
         if (!this.product.productName || 
         !this.product.price || 
