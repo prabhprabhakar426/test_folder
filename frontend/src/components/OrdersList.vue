@@ -150,6 +150,81 @@ import { api } from '../utils/interceptor'
 </script>
 
 <style scoped>
+/* Enhanced Orders Table Design */
+.bordered-table {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 4px solid;
+  border-image: linear-gradient(270deg, #6366f1, #38bdf8, #fbbf24, #ef4444, #6366f1) 1;
+  animation: border-anim 6s linear infinite;
+  box-shadow: 0 4px 24px rgba(99,102,241,0.10);
+  background: #f8fafc;
+  width: 100%;
+  margin: 0 auto 24px auto;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.bordered-table th, .bordered-table td {
+  padding: 14px 10px;
+  text-align: center;
+}
+.bordered-table th {
+  background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  border-bottom: 2px solid #e0e7ff;
+  letter-spacing: 0.5px;
+}
+.bordered-table tbody tr:nth-child(even) {
+  background: #e0e7ff;
+}
+.bordered-table tbody tr:nth-child(odd) {
+  background: #f8fafc;
+}
+.bordered-table tbody tr:hover {
+  background: #c7d2fe;
+  transition: background 0.18s;
+}
+.bordered-table td {
+  color: #3730a3;
+  font-weight: 500;
+  border-bottom: 1px solid #e0e7ff;
+}
+.bordered-table td.center {
+  text-align: center;
+}
+.bordered-table th:first-child, .bordered-table td:first-child {
+  border-left: none;
+}
+.bordered-table th:last-child, .bordered-table td:last-child {
+  border-right: none;
+}
+.bordered-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive Table */
+@media (max-width: 900px) {
+  .bordered-table th, .bordered-table td {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+  .bordered-table {
+    font-size: 13px;
+  }
+}
+@media (max-width: 600px) {
+  .bordered-table {
+    font-size: 11px;
+    border-radius: 8px;
+  }
+  .bordered-table th, .bordered-table td {
+    padding: 5px 2px;
+  }
+}
 .bordered-table th,
 .bordered-table td {
   border: 1px solid #a1def1;
