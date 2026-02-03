@@ -6,29 +6,52 @@
       <h2>Product List</h2>
 
       <!-- Top Actions -->
-    <div class="actions">
-      <input
-        type="text"
-        v-model="search"
-        placeholder="Search products..."
-      />
-      <button class="add-btn" v-if="canAddProduct" @click="showProductForm">
-        <i class="fas fa-plus"></i> Add Product
-      </button>
-    </div>
+      <div class="actions">
+        <!-- Search -->
+        <input
+          type="text"
+          v-model="search"
+          placeholder="Search products..."
+        />
 
+        <!-- Category Filter -->
+        <div class="field">
+          <select v-model="selectedCategory">
+            <option value="">All Categories</option>
+            <option>Electronics</option>
+            <option>Stationary</option>
+            <option>Home Appliances</option>
+            <option>Beauty & Personal</option>
+            <option>Sports Wear</option>
+          </select>
+          <label>Category</label>
+        </div>
+
+        <button
+          class="add-btn"
+          v-if="canAddProduct"
+          @click="showProductForm"
+        >
+          <i class="fas fa-plus"></i> Add Product
+        </button>
+      </div>
+
+      <!-- Product Grid -->
       <div class="card-grid">
-        <div class="card" v-for="product in filteredProducts" :key="product.id">
-          
+        <div
+          class="card"
+          v-for="product in filteredProducts"
+          :key="product.id"
+        >
           <!-- Product Image -->
           <img
             class="product-image"
-            :src=product.productImage
+            :src="product.productImage"
             alt="Product Image"
           />
 
           <!-- Product Name -->
-          <p class="title" >{{ product.productName }}</p>
+          <p class="title">{{ product.productName }}</p>
 
           <!-- Price -->
           <p class="price">₹ {{ product.price }}</p>
@@ -41,31 +64,33 @@
             Stock Left: {{ product.totalStock }}
           </p>
 
-          <!-- Buy -->
+          <!-- Buy / Admin Actions -->
           <p v-if="canBuy">
             <button class="buy" @click="buyProduct(product)">
               Buy
             </button>
           </p>
-          <div v-if="!canBuy" class="action-buttons">
+
+          <div v-else class="action-buttons">
             <button class="update" @click="UpdateProduct(product)">
               Update
             </button>
             <button class="delete" @click="deleteProduct(product)">
               Delete
             </button>
-        </div>
-
-          
-          <p v-if="product.length === 0" class="center">
-            No Product Fount
-          </p>
-
+          </div>
         </div>
       </div>
+
+      <!-- Empty State -->
+      <p v-if="filteredProducts.length === 0" class="center">
+        No Product Found
+      </p>
+
     </div>
   </div>
 </template>
+
 
 <script>
 import { menuItems } from '@/utils/global';
@@ -91,8 +116,18 @@ export default {
       products: [],
       menuItems: [],
       defaultImage: '/no-image.png',
-      search:""
+      search:"",
+      debounceSearch:"",
+      selectedCategory:""
     };
+  },
+  watch:{
+    search(val){
+      clearTimeout(this._timer)
+      this._timer = setTimeout(()=>{
+        this.debounceSearch = val 
+      }, 200)
+    }
   },
   computed: {
     imageSrc() {
@@ -100,13 +135,20 @@ export default {
       return this.products.productImage || this.defaultImage;
     },
     filteredProducts() {
-      if (this.products) {
-        return this.products.filter(product =>
-          product.productName.toLowerCase().includes(this.search.toLowerCase()) ||
-          product.category.toLowerCase().includes(this.search.toLowerCase())
+      let products = this.products;
+      if (this.search) {
+       products = products.filter(product =>
+          product.productName.toLowerCase().includes(this.search.toLowerCase())
         );
       }
-       return this.products ;
+      
+      if(this.selectedCategory){
+        console.log('category methods ',products)
+        products =  products.filter(product =>
+          product.category === this.selectedCategory
+        );
+      }
+      return products;
     },
     canAddProduct(){
       const role = getRole();
@@ -196,7 +238,8 @@ export default {
         quantity: product.totalStock
       }
       this.$router.push({name:'ProductUpdateForm', query})
-    }
+    },
+    
   }
 };
 </script>
@@ -288,7 +331,7 @@ export default {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
 }
 
@@ -379,5 +422,43 @@ export default {
   border-radius: 6px;
   font-weight: 600;
 }
+
+.field {
+  position: relative;
+  width: 220px;
+}
+
+.field select {
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+}
+
+.field label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  background: #fff;
+  padding: 0 6px;
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+}
+
+/* Focus state */
+.field select:focus {
+  border-color: #4f46e5;
+}
+
+/* Disabled option look */
+.field select option[disabled] {
+  color: #999;
+}
+
 
 </style>
