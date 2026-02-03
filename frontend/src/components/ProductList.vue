@@ -331,32 +331,39 @@ export default {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 24px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 /* Card */
 .card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 16px;
-  border: 1px solid #beb4e0;
+  background: linear-gradient(135deg, #f8fafc 70%, #e0e7ff 100%);
+  border-radius: 18px;
+  padding: 22px 16px 18px 16px;
+  border: 2px solid #e0e7ff;
   text-align: center;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.10);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(99, 102, 241, 0.18);
 }
 
 
 .product-image {
   width: 100%;
+  max-width: 200px;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
 /* .product-image {
@@ -368,19 +375,41 @@ export default {
 
 /* Name */
 .title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #374151;
+  font-size: 16px;
+  font-weight: 700;
+  color: #3730a3;
   margin-bottom: 6px;
+  word-break: break-word;
 }
 
 /* Price */
 .price {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #2563eb;
   margin-bottom: 6px;
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 2vw;
+  }
+  .card {
+    padding: 14px 6px 10px 6px;
+    border-radius: 12px;
+    min-width: 0;
+  }
+  .product-image {
+    max-width: 100vw;
+    border-radius: 8px;
+  }
+  .title {
+    font-size: 14px;
+  }
+  .price {
+    font-size: 15px;
+  }
 }
+
 
 /* Stock */
 .stock {

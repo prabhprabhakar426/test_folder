@@ -40,7 +40,6 @@
         <span class="label">Joined</span>
         <span class="value">{{formattedDate()}}</span>
       </div>
-      <button class="edit-btn">Edit</button>
     </div>
   </div>
   </div>
@@ -151,8 +150,8 @@ body {
 
 /* Card */
 .profile-card {
-  max-width: 370px;
-  width: 95vw;
+  max-width: 440px;
+  width: 98vw;
   margin: 32px auto;
   background: linear-gradient(120deg, #f8fafc 60%, #e0e7ff 100%);
   border-radius: 18px;
