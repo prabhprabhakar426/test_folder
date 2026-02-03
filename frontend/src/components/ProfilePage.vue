@@ -31,7 +31,7 @@
 
     <div class="profile-row">
       <span class="label">Joined</span>
-      <span class="value">{{formattedDate}}</span>
+      <span class="value">{{formattedDate()}}</span>
     </div>
   </div>
   </div>
@@ -49,7 +49,8 @@ import { menuItems } from '@/utils/global';
         data(){
             return{
                 defaultImage:'/no-image.png',
-                profile:{},
+                profileImage:'',
+                profile:[],
                 menuItems:[]
             }
         },
@@ -57,13 +58,11 @@ import { menuItems } from '@/utils/global';
             NavbarComp
         },
         mounted(){
-            this.menuItems = menuItems()
+            this.menuItems = menuItems();
             this.fetchProfileData();
         },
         computed:{
-            formattedDate() {
-                return this.profile.createdOn.split(' ')[0]
-            }
+            
         },
         methods:{
             async fetchProfileData(){
@@ -85,6 +84,12 @@ import { menuItems } from '@/utils/global';
                     this.profile = response.data;
                     console.log(this.profile);
                 }
+            },
+            formattedDate() {
+              if(this.profile){
+                return this.profile.createdOn.split(' ')[0]
+              }
+              return null;
             }
         }
     }

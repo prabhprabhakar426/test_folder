@@ -14,6 +14,7 @@ const getAll = async(req, res, next) => {
             id: p.id,
             productName: p.productName,
             price: p.price,
+            category: p.category,
             totalStock: p.totalStock,
             productImage: `${req.protocol}://${req.get("host")}/uploads/productphotos/${p.productImage}`
         }));
