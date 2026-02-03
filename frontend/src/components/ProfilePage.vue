@@ -8,30 +8,39 @@
         alt="Profile Photo"
         class="profile-photo"
       />
+      <button class="edit-photo-btn" @click="onEditPhoto">Edit Photo</button>
       <h2>Profile</h2>
     </div>
 
     <div class="profile-row">
-      <span class="label">Name</span>
-      <span class="value">
-        {{profile.name}}
-        <button class="edit-btn">Edit</button>
-      </span>
+      <div class="profile-row-left">
+        <span class="label">Name</span>
+        <span class="value">{{profile.name}}</span>
+      </div>
+      <button class="edit-btn">Edit</button>
     </div>
 
     <div class="profile-row">
-      <span class="label">Role</span>
-      <span class="value">{{profile.role}}</span>
+      <div class="profile-row-left">
+        <span class="label">Role</span>
+        <span class="value">{{profile.role}}</span>
+      </div>
     </div>
 
     <div class="profile-row">
-      <span class="label">Email</span>
-      <span class="value">{{profile.email}} </span>
+      <div class="profile-row-left">
+        <span class="label">Email</span>
+        <span class="value">{{profile.email}}</span>
+      </div>
+      <button class="edit-btn">Edit</button>
     </div>
 
     <div class="profile-row">
-      <span class="label">Joined</span>
-      <span class="value">{{formattedDate()}}</span>
+      <div class="profile-row-left">
+        <span class="label">Joined</span>
+        <span class="value">{{formattedDate()}}</span>
+      </div>
+      <button class="edit-btn">Edit</button>
     </div>
   </div>
   </div>
@@ -90,15 +99,51 @@ import { menuItems } from '@/utils/global';
                 return this.profile.createdOn.split(' ')[0]
               }
               return null;
+            },
+            onEditPhoto() {
+              // Placeholder for edit photo logic
+              alert('Edit profile photo clicked!');
             }
         }
     }
 </script>
 
 <style scoped>
-   body {
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  background: linear-gradient(135deg, #eef2f7, #f9fafb);
+  /* Edit Photo Button */
+  .edit-photo-btn {
+    margin: 12px auto 0 auto;
+    display: block;
+    font-size: 13px;
+    padding: 6px 18px;
+    border-radius: 22px;
+    border: none;
+    background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.10);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    outline: none;
+  }
+  .edit-photo-btn:hover {
+    background: linear-gradient(90deg, #4338ca 0%, #2563eb 100%);
+    transform: translateY(-2px) scale(1.04);
+  }
+  /* Row with edit button on right */
+  .profile-row-edit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .profile-row-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+body {
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f9fafb 100%);
   margin: 0;
   padding: 40px;
   color: #1f2933;
@@ -106,37 +151,51 @@ import { menuItems } from '@/utils/global';
 
 /* Card */
 .profile-card {
-  max-width: 520px;
-  margin: auto;
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 28px;
+  max-width: 370px;
+  width: 95vw;
+  margin: 32px auto;
+  background: linear-gradient(120deg, #f8fafc 60%, #e0e7ff 100%);
+  border-radius: 18px;
+  padding: 12px 14px 8px 14px;
   box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.08),
-    0 4px 10px rgba(0, 0, 0, 0.04);
+    0 8px 24px rgba(30, 64, 175, 0.10),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 2px solid;
+  border-image: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  border-image-slice: 1;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.profile-card:hover {
+  box-shadow:
+    0 16px 40px rgba(30, 64, 175, 0.16),
+    0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* Header */
 .profile-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 18px;
 }
 
 .profile-header h2 {
-  margin: 12px 0 0;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  margin: 16px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #3730a3;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* Profile Image */
 .profile-photo {
-  width: 110px;
-  height: 110px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #e5e7eb;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  border: 5px solid #6366f1;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.13);
+  background: #f3f4f6;
 }
 
 /* Rows */
@@ -144,8 +203,8 @@ import { menuItems } from '@/utils/global';
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f2f5;
+  padding: 10px 0 6px 0;
+  border-bottom: 1.5px solid #e0e7ff;
 }
 
 .profile-row:last-child {
@@ -154,57 +213,76 @@ import { menuItems } from '@/utils/global';
 
 /* Labels */
 .label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: #6b7280;
+  color: #6366f1;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.7px;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* Values */
 .value {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
-  color: #111827;
+  color: #3730a3;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* Edit Button */
 .edit-btn {
-  font-size: 12px;
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid #2563eb;
-  background-color: #2563eb;
-  color: #ffffff;
+  font-size: 13px;
+  padding: 6px 18px;
+  border-radius: 22px;
+  border: none;
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.10);
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: background 0.2s, transform 0.2s;
+  outline: none;
 }
-
 .edit-btn:hover {
-  background-color: #1e40af;
-  border-color: #1e40af;
-  transform: translateY(-1px);
+  background: linear-gradient(90deg, #4338ca 0%, #2563eb 100%);
+  transform: translateY(-2px) scale(1.04);
 }
 
 /* Responsive */
 @media (max-width: 600px) {
   body {
-    padding: 20px;
+    padding: 10px;
   }
-
   .profile-card {
-    padding: 22px;
+    max-width: 98vw;
+    padding: 4px 2vw 6px 2vw;
+    border-radius: 12px;
   }
-
+  .profile-header {
+    margin-bottom: 10px;
+  }
+  .profile-row {
+    padding: 6px 0 3px 0;
+  }
+  .profile-header h2 {
+    font-size: 20px;
+  }
+  .profile-photo {
+    width: 110px;
+    height: 110px;
+  }
   .label {
+    font-size: 12px;
+  }
+  .value {
     font-size: 13px;
   }
-
-  .value {
-    font-size: 14px;
+  .edit-btn {
+    font-size: 11px;
+    padding: 4px 10px;
   }
 }
 
