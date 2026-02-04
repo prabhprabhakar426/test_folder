@@ -75,7 +75,7 @@
             <button class="update" @click="UpdateProduct(product)">
               Update
             </button>
-            <button class="delete" @click="deleteProduct(product)">
+            <button class="delete" @click="openDeleteModal(product)">
               Delete
             </button>
           </div>
@@ -86,6 +86,22 @@
       <p v-if="filteredProducts.length === 0" class="center">
         No Product Found
       </p>
+
+      <!-- Delete confirmation modal (minimal) -->
+      <div v-if="showDeleteModal" class="simple-overlay">
+        <div class="simple-modal">
+          <img :src="(productToDelete && productToDelete.productImage) || defaultImage" alt="product" class="simple-modal-img" />
+          <div class="simple-modal-body">
+            <strong>{{ productToDelete.productName }}</strong>
+            <div>Price: ₹ {{ productToDelete.price }}</div>
+            <div>Stock: {{ productToDelete.totalStock }}</div>
+          </div>
+          <div class="simple-modal-actions">
+            <button class="btn-cancel" @click="cancelDelete" :disabled="deleting">Cancel</button>
+            <button class="btn-delete" @click="performDelete" :disabled="deleting">{{ deleting ? 'Deleting...' : 'Delete' }}</button>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -118,7 +134,11 @@ export default {
       defaultImage: '/no-image.png',
       search:"",
       debounceSearch:"",
-      selectedCategory:""
+      selectedCategory:"",
+      // delete modal state
+      showDeleteModal: false,
+      productToDelete: null,
+      deleting: false
     };
   },
   watch:{
@@ -203,29 +223,35 @@ export default {
       // this.users = this.products.filter(product => product.id !== id);
     },
 
-    async deleteProduct(product){
-      console.log(product.id)
-      try {
+    // open a small modal to confirm delete
+    openDeleteModal(product){
+      this.productToDelete = product;
+      this.showDeleteModal = true;
+    },
+
+    cancelDelete(){
+      this.productToDelete = null;
+      this.showDeleteModal = false;
+    },
+
+    async performDelete(){
+      if(!this.productToDelete) return;
+      try{
+        this.deleting = true;
         const response = await api.delete('/inventory/delete/',{
-          data:{
-            id: product.id
-          }
+          data:{ id: this.productToDelete.id }
         });
-        // const response = await axios.delete('http://localhost:8080/inventory/delete/',{
-        //   data:{
-        //     id: product.id
-        //   },
-        //   headers:{
-        //     Authorization: `Bearer ${localStorage.getItem("authTokens")}`
-        //   }
-        // });
         if(response){
-          alert('Product is Deleted');
           await this.fetchAllProducts();
         }
-        this.products = response.data;
-      } catch (error) {
-        console.error(error.message);
+        this.cancelDelete();
+      }
+      catch(err){
+        console.error('Delete failed', err);
+        alert('Failed to delete product');
+      }
+      finally{
+        this.deleting = false;
       }
     },
 
@@ -399,14 +425,42 @@ export default {
   border: 1px solid #d1d5db;
 }
 
-.save-btn {
-  background: #10b981;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
+/* Simple confirmation modal */
+.simple-overlay{
+  position: fixed;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(2,6,23,0.45);
+  z-index: 1000;
 }
+.simple-modal{
+  background: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  width: 420px;
+  max-width: 92vw;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+}
+.simple-modal-img{
+  width:72px;
+  height:72px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
+}
+.simple-modal-body{ flex:1; }
+.simple-modal-actions{ display:flex; gap:8px; }
+.btn-cancel{ background:#fff; border:1px solid #e5e7eb; padding:8px 12px; border-radius:8px; cursor:pointer }
+.btn-delete{ background: linear-gradient(90deg,#dc2626 0%, #ef4444 100%); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer }
+.btn-delete[disabled], .btn-cancel[disabled]{ opacity:0.6; cursor:not-allowed }
+  /* border-radius: 8px;
+  cursor: pointer;
+} */
 
 .cancel {
   margin-left: 6px;
