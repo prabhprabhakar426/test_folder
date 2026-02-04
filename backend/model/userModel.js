@@ -67,7 +67,7 @@ async function allUsers(email){
 
 async function getUserById(id){
     try{
-        const query = 'SELECT  name, email, role, createdOn FROM user_table WHERE id = ?';
+        const query = 'SELECT  id, name, email, role, createdOn, profilePath FROM user_table WHERE id = ?';
         const [rows] = await db.query(query,[id]);
         // console.log(rows)
         return rows[0];
@@ -83,6 +83,18 @@ async function totalUsersCount(){
         const query = 'SELECT COUNT(id) as TotalUsers FROM user_table'
         const [response] = await db.query(query);
         return response[0].TotalUsers;
+    }
+    catch(error){
+        console.log(error.message);
+        throw error;
+    }
+}
+
+async function uploadProfilePhoto(id, file){
+    try{
+        const query = 'UPDATE user_table SET profilePath = ? WHERE id = ?';
+        const [result] = await db.query(query, [file.filename, id]);
+        return result;
     }
     catch(error){
         console.log(error.message);
@@ -128,4 +140,4 @@ async function deleteUserById(id){
     }
 }
 
-module.exports = {addNewUser, checkUserLogin, allUsers, totalUsersCount, deleteUserById, getUserById, generateToken}
+module.exports = {uploadProfilePhoto, addNewUser, checkUserLogin, allUsers, totalUsersCount, deleteUserById, getUserById, generateToken}

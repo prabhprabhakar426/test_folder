@@ -4,11 +4,13 @@
     <div class="profile-card">
     <div class="profile-header">
       <img
-        :src="defaultImage"
+        :src="previewImage || profile.profileUrl || defaultImage"
         alt="Profile Photo"
         class="profile-photo"
       />
-      <button class="edit-photo-btn" @click="onEditPhoto">Edit Photo</button>
+      <!-- hidden file input triggered by Edit Photo button -->
+      <input type="file" ref="photoInput" style="display:none" @change="onFileSelected" accept="image/*" />
+      <button class="edit-photo-btn" @click="onEditPhoto">Change Photo</button>
       <h2>Profile</h2>
     </div>
 
@@ -56,10 +58,13 @@ import { menuItems } from '@/utils/global';
         name: 'ProfilePage',
         data(){
             return{
-                defaultImage:'/no-image.png',
+                    defaultImage:'/no-image.png',
                 profileImage:'',
                 profile:[],
-                menuItems:[]
+                menuItems:[],
+                previewImage: null,
+                selectedFile: null,
+                uploading: false
             }
         },
         components:{
@@ -100,8 +105,46 @@ import { menuItems } from '@/utils/global';
               return null;
             },
             onEditPhoto() {
-              // Placeholder for edit photo logic
-              alert('Edit profile photo clicked!');
+              // trigger the hidden file input
+              this.$refs.photoInput.click();
+            },
+            async onFileSelected(e) {
+              const file = e.target.files[0];
+              if(!file) return;
+              this.selectedFile = file;
+              // show local preview
+              this.previewImage = URL.createObjectURL(file);
+
+              // Attempt upload if backend endpoint exists; fail gracefully
+              try{
+                this.uploading = true;
+                const userId = getUserId();
+                const fd = new FormData();
+                fd.append('profileImage', file);
+                fd.append('id', userId);
+                console.log(api.defaults.baseURL);
+                const resp = await api.put('/user/uploadProfilePhoto/',
+                  fd,
+                  {
+                    params: { id: userId }
+                  }
+                );
+                if(resp && resp.data && resp.data.url){
+                  // update profile picture to server URL
+                  this.profile.profileImage = resp.data.url;
+                  alert('Photo uploaded successfully');
+                } else {
+                  // backend not configured for upload; keep preview
+                  alert('Photo selected (preview only). Server upload may not be configured.');
+                }
+              }
+              catch(error){
+                console.error('Upload error', error);
+                alert('Upload failed — preview is available locally');
+              }
+              finally{
+                this.uploading = false;
+              }
             }
         }
     }

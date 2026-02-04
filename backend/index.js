@@ -51,6 +51,7 @@ app.get('/get',(req, res)=>{
 
 // API Not Found error handler
 app.use((req, res, next)=>{
+    console.log('Request URL:', req.get('host') + req.originalUrl);
     const error = new Error('URL is Not Found');
     error.status = 404;
     next(error);

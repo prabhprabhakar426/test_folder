@@ -1,7 +1,9 @@
 const express = require('express');
-const { registerUser, loginUser, getAllUsers, userDashboard, deleteUser, getUser, refresh, logout} = require('../controllers/userController');
+const { registerUser, loginUser, getAllUsers, userDashboard, deleteUser, getUser, refresh, logout, addProfilePicture} = require('../controllers/userController');
 const { verifyToken } = require('../middleware/jwtAuthenticate');
 const { authorizeRole } = require('../middleware/roleMiddleware');
+const upload = require('../middleware/photoUploads');
+
 
 // router object
 const router = express.Router();
@@ -24,6 +26,8 @@ router.delete('/delete', verifyToken, authorizeRole('ADMIN'), deleteUser);
 router.post('/refresh',refresh);
 
 router.post('/logout', verifyToken, logout);
+
+router.put('/uploadProfilePhoto/', verifyToken, upload.single('profileImage'), addProfilePicture);
 //GET Student by id
 // router.get('/getStudent/:id', getStudentById);
 

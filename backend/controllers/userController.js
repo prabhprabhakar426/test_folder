@@ -70,6 +70,10 @@ const getUser = async(req, res, next)=>{
     try{
         const id = req.query.id;
         const response = await userModel.getUserById(id);
+        
+        if (response.profilePath) {
+            response.profileUrl = req.protocol + '://' + req.get('host') + '/uploads/profilephotos/'+ response.profilePath;
+        }   
         console.log(response)
         res.json(response);
     }
@@ -94,6 +98,27 @@ const userDashboard = async(req, res, next) =>{
         next(error);
     }
 }
+
+const addProfilePicture = async(req, res, next) =>{
+    try{
+        const id = req.query.id;
+        console.log('User ID for profile pic upload: ', id);
+        console.log('File info: ', req.file);
+        const response = await userModel.uploadProfilePhoto(id, req.file);
+        res.status(200).json({
+            status : "success",
+            statusCode : 200,
+            message : "Profile Photo Updated",
+            data: response
+    });
+    }
+    catch(error){
+        console.log(error.message);
+        error.status = error.status || 500;
+        next(error);
+    }
+}
+
 
 const deleteUser = async(req, res, next) => {
     try{
@@ -148,4 +173,4 @@ const logout = (req, res) =>{
     return res.status(200).json({ message: 'Logged out successfully' });
 }
 
-module.exports = {registerUser, loginUser, getAllUsers,userDashboard, deleteUser, getUser, refresh,logout}
+module.exports = {addProfilePicture, registerUser, loginUser, getAllUsers,userDashboard, deleteUser, getUser, refresh,logout}

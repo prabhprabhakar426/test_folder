@@ -3,6 +3,8 @@ const {getAll, get, add, update, remove, adminDashboard, managerDashboard, getIm
 const { verifyToken } = require('../middleware/jwtAuthenticate');
 const { authorizeRole } = require('../middleware/roleMiddleware');
 const upload = require('../middleware/photoUploads');
+
+// router object
 const router = express.Router();
 
 router.get('/get', verifyToken, getAll);
