@@ -15,6 +15,7 @@
             placeholder="Search products..."
             class="search-input"
           />
+          <i v-if="searching" class="search-spinner" aria-hidden="true"></i>
         </div>
         <div class="category-group">
           <label for="category-select" class="category-label"><i class="fas fa-filter"></i> Category</label>
@@ -134,6 +135,7 @@ export default {
       defaultImage: '/no-image.png',
       search:"",
       debounceSearch:"",
+      searching: false,
       selectedCategory:"",
       // delete modal state
       showDeleteModal: false,
@@ -143,10 +145,13 @@ export default {
   },
   watch:{
     search(val){
+      // show searching indicator while user types
+      this.searching = true;
       clearTimeout(this._timer)
       this._timer = setTimeout(()=>{
-        this.debounceSearch = val 
-      }, 200)
+        this.debounceSearch = val;
+        this.searching = false;
+      }, 300) // 300ms debounce
     }
   },
   computed: {
@@ -156,9 +161,9 @@ export default {
     },
     filteredProducts() {
       let products = this.products;
-      if (this.search) {
+      if (this.debounceSearch) {
        products = products.filter(product =>
-          product.productName.toLowerCase().includes(this.search.toLowerCase())
+          product.productName.toLowerCase().includes(this.debounceSearch.toLowerCase())
         );
       }
       
@@ -189,6 +194,12 @@ export default {
   mounted() {
     this.menuItems = menuItems();
     this.fetchAllProducts();
+  },
+  beforeUnmount(){
+    if(this._timer){
+      clearTimeout(this._timer);
+      this._timer = null;
+    }
   },
 
   methods: {
@@ -317,6 +328,20 @@ export default {
   color: #a5b4fc;
   font-size: 14px;
 }
+
+/* small spinner shown while debouncing search */
+.search-spinner{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  border:2px solid #e6eefc;
+  border-top-color:#6366f1;
+  margin-left:8px;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin{
+  to{ transform: rotate(360deg); }
+}
 .category-group {
   display: flex;
   align-items: center;
@@ -380,6 +405,14 @@ export default {
     min-width: 0;
   }
 }
+
+@media (max-width: 600px) {
+  .card{
+    min-height: unset; /* allow compact cards on small screens */
+    padding: 14px 12px;
+  }
+}
+
 
 .action-buttons {
   display: flex;
@@ -498,12 +531,33 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between; /* push actions to bottom */
+  min-height: 340px; /* ensure consistent card height */
+  box-sizing: border-box;
 }
 
 .card:hover {
   transform: translateY(-6px) scale(1.03);
   box-shadow: 0 16px 32px rgba(99, 102, 241, 0.18);
 }
+
+/* Keep actions aligned to bottom of card */
+.card .action-buttons, .card p[action] {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Truncate title to 2 lines so cards stay similar */
+.title{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price{ margin-top:6px; margin-bottom:8px; }
 
 
 .product-image {
