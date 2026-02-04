@@ -6,17 +6,19 @@
       <h2>Product List</h2>
 
       <!-- Top Actions -->
-      <div class="actions">
-        <!-- Search -->
-        <input
-          type="text"
-          v-model="search"
-          placeholder="Search products..."
-        />
-
-        <!-- Category Filter -->
-        <div class="field">
-          <select v-model="selectedCategory">
+      <div class="actions-bar">
+        <div class="search-group">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            v-model="search"
+            placeholder="Search products..."
+            class="search-input"
+          />
+        </div>
+        <div class="category-group">
+          <label for="category-select" class="category-label"><i class="fas fa-filter"></i> Category</label>
+          <select v-model="selectedCategory" id="category-select" class="category-select">
             <option value="">All Categories</option>
             <option>Electronics</option>
             <option>Stationary</option>
@@ -24,11 +26,9 @@
             <option>Beauty & Personal</option>
             <option>Sports Wear</option>
           </select>
-          <label>Category</label>
         </div>
-
         <button
-          class="add-btn"
+          class="add-btn-pro"
           v-if="canAddProduct"
           @click="showProductForm"
         >
@@ -246,18 +246,113 @@ export default {
 
 <style scoped>
 
-.actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
 
-.actions input {
-  width: 200px;
-  padding: 8px;
-  margin-left: 20px;
-  border-radius: 10px;
-  border: 1px solid #5be097;
+/* Professional Actions Bar */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #f8fafc 60%, #e0e7ff 100%);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(99,102,241,0.07);
+  padding: 18px 24px 14px 24px;
+  margin-bottom: 24px;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.search-group {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+  padding: 0 10px;
+  border: 1.5px solid #e0e7ff;
+  min-width: 220px;
+  flex: 1 1 220px;
+  max-width: 320px;
+}
+.search-icon {
+  color: #6366f1;
+  font-size: 16px;
+  margin-right: 7px;
+}
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  padding: 10px 0;
+  width: 100%;
+  color: #3730a3;
+  font-family: inherit;
+}
+.search-input::placeholder {
+  color: #a5b4fc;
+  font-size: 14px;
+}
+.category-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+  padding: 0 10px;
+  border: 1.5px solid #e0e7ff;
+  min-width: 180px;
+  flex: 1 1 180px;
+  max-width: 240px;
+}
+.category-label {
+  color: #6366f1;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.category-select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #3730a3;
+  font-family: inherit;
+  padding: 10px 0;
+  min-width: 100px;
+}
+.add-btn-pro {
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 22px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.18s, transform 0.18s;
+}
+.add-btn-pro:hover {
+  background: linear-gradient(90deg, #4338ca 0%, #2563eb 100%);
+  transform: translateY(-2px) scale(1.04);
+}
+@media (max-width: 900px) {
+  .actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 8px 10px 8px;
+  }
+  .search-group, .category-group {
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 .action-buttons {
@@ -331,32 +426,39 @@ export default {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 24px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 /* Card */
 .card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 16px;
-  border: 1px solid #beb4e0;
+  background: linear-gradient(135deg, #f8fafc 70%, #e0e7ff 100%);
+  border-radius: 18px;
+  padding: 22px 16px 18px 16px;
+  border: 2px solid #e0e7ff;
   text-align: center;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.10);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(99, 102, 241, 0.18);
 }
 
 
 .product-image {
   width: 100%;
+  max-width: 200px;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
 /* .product-image {
@@ -368,19 +470,41 @@ export default {
 
 /* Name */
 .title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #374151;
+  font-size: 16px;
+  font-weight: 700;
+  color: #3730a3;
   margin-bottom: 6px;
+  word-break: break-word;
 }
 
 /* Price */
 .price {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #2563eb;
   margin-bottom: 6px;
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 2vw;
+  }
+  .card {
+    padding: 14px 6px 10px 6px;
+    border-radius: 12px;
+    min-width: 0;
+  }
+  .product-image {
+    max-width: 100vw;
+    border-radius: 8px;
+  }
+  .title {
+    font-size: 14px;
+  }
+  .price {
+    font-size: 15px;
+  }
 }
+
 
 /* Stock */
 .stock {
