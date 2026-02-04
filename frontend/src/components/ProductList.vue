@@ -552,7 +552,7 @@ export default {
 /* Truncate title to 2 lines so cards stay similar */
 .title{
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* -webkit-line-clamp: 2; */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
