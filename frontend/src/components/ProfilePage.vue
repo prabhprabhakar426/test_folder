@@ -19,7 +19,20 @@
         <span class="label">Name</span>
         <span class="value">{{profile.name}}</span>
       </div>
-      <button class="edit-btn">Edit</button>
+      <button class="edit-btn" @click="isNameEditing = true">Edit</button>
+    </div>
+
+    <div>
+      <form v-if="isNameEditing" class="edit-form" @submit.prevent="saveName">
+        <input
+          type="text"
+          v-model="editedName"
+          placeholder="Enter new name"
+          required
+        />
+        <button type="submit">Save</button>
+        <button type="button" @click="isNameEditing = false">Cancel</button>
+      </form>
     </div>
 
     <div class="profile-row">
@@ -34,7 +47,32 @@
         <span class="label">Email</span>
         <span class="value">{{profile.email}}</span>
       </div>
-      <button class="edit-btn">Edit</button>
+      <button class="edit-btn" @click="isEmailEditing = true">Edit</button>
+    </div>
+
+    <div>
+      <form v-if="isEmailEditing" class="edit-form" @submit.prevent="saveEmail">
+        <input
+          type="text"
+          v-model="editedEmail"
+          placeholder="Enter new email"
+          required
+        />
+        <input
+          type="text"
+          v-model="confirmEmail"
+          placeholder="confirm email"
+          required
+        />
+        <input
+          type="password"
+          v-model="confirmPassword"
+          placeholder="confirm password"
+          required
+        />
+        <button type="submit">Save</button>
+        <button type="button" @click="isEmailEditing = false">Cancel</button>
+      </form>
     </div>
 
     <div class="profile-row">
@@ -64,7 +102,12 @@ import { menuItems } from '@/utils/global';
                 menuItems:[],
                 previewImage: null,
                 selectedFile: null,
-                uploading: false
+                isNameEditing: false,
+                isEmailEditing: false,
+                editedName:'',
+                editedEmail:'',
+                confirmEmail:'',
+                confirmPassword:'',
             }
         },
         components:{
@@ -98,6 +141,33 @@ import { menuItems } from '@/utils/global';
                     console.log(this.profile);
                 }
             },
+            async saveName(){
+              const userId = getUserId();
+              const respone = await api.put('/user/update/',{
+                id: userId,
+                name: this.editedName
+              });
+              if(respone && respone.data){
+                this.profile.name = this.editedName;
+                this.isEditing = false;
+                alert('Name updated successfully');
+              }
+            },
+
+            async saveEmail(){
+              const userId = getUserId();
+              const respone = await api.put('/user/update/',{
+                id: userId,
+                email: this.editedEmail,
+                confirmPassword: this.confirmPassword
+              });
+              if(respone && respone.data){
+                this.profile.email = this.editedEmail;
+                this.isEmailEditing = false;
+                alert('Email updated successfully');
+              }
+            },
+
             formattedDate() {
               if(this.profile){
                 return this.profile.createdOn.split(' ')[0]
@@ -112,38 +182,28 @@ import { menuItems } from '@/utils/global';
               const file = e.target.files[0];
               if(!file) return;
               this.selectedFile = file;
-              // show local preview
-              this.previewImage = URL.createObjectURL(file);
 
               // Attempt upload if backend endpoint exists; fail gracefully
               try{
-                this.uploading = true;
                 const userId = getUserId();
                 const fd = new FormData();
                 fd.append('profileImage', file);
                 fd.append('id', userId);
                 console.log(api.defaults.baseURL);
-                const resp = await api.put('/user/uploadProfilePhoto/',
+                const response = await api.put('/user/uploadProfilePhoto/',
                   fd,
                   {
                     params: { id: userId }
                   }
                 );
-                if(resp && resp.data && resp.data.url){
-                  // update profile picture to server URL
-                  this.profile.profileImage = resp.data.url;
-                  alert('Photo uploaded successfully');
-                } else {
-                  // backend not configured for upload; keep preview
-                  alert('Photo selected (preview only). Server upload may not be configured.');
-                }
+                
+                // update profile picture to server URL
+                this.profile.profileImage = response.data.url;
+                alert('Photo uploaded successfully');
               }
               catch(error){
                 console.error('Upload error', error);
-                alert('Upload failed — preview is available locally');
-              }
-              finally{
-                this.uploading = false;
+                alert('Upload failed');
               }
             }
         }
@@ -292,7 +352,43 @@ body {
   background: linear-gradient(90deg, #4338ca 0%, #2563eb 100%);
   transform: translateY(-2px) scale(1.04);
 }
-
+/* Edit Form */
+.edit-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 10px 0 14px;
+  flex-wrap: wrap;
+}
+.edit-form input[type="text"], .edit-form input[type="password"] {
+  flex: 1 1 240px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+  color: #1f2933;
+  background: #fff;
+}
+.edit-form button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+}
+.edit-form button[type="button"] {
+  background: #fff;
+  color: #3730a3;
+  border: 1px solid #e5e7eb;
+}
+.edit-form button:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(.96);
+}
 /* Responsive */
 @media (max-width: 600px) {
   body {

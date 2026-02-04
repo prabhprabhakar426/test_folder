@@ -5,6 +5,7 @@ const AppError = require('../error/AppError')
 const { decode } = require('jsonwebtoken')
 const jwt = require('jsonwebtoken');
 
+// user registration function
 const registerUser = async(req, res, next)=>{
 
     try{console.log(req.body);
@@ -25,6 +26,7 @@ const registerUser = async(req, res, next)=>{
     }
 }
 
+// user login function
 const loginUser = async(req, res, next)=>{
     try{
         // console.log('login server' + req.body)
@@ -51,6 +53,7 @@ const loginUser = async(req, res, next)=>{
     }
 }
 
+// get all users function
 const getAllUsers = async(req, res, next)=>{
     try{
         console.log(req.user)
@@ -99,6 +102,7 @@ const userDashboard = async(req, res, next) =>{
     }
 }
 
+// add profile picture function
 const addProfilePicture = async(req, res, next) =>{
     try{
         const id = req.query.id;
@@ -119,7 +123,7 @@ const addProfilePicture = async(req, res, next) =>{
     }
 }
 
-
+// delete user function
 const deleteUser = async(req, res, next) => {
     try{
         const {id} = req.body;
@@ -136,6 +140,7 @@ const deleteUser = async(req, res, next) => {
     }
 }
 
+// refresh token function
 const refresh = (req, res, next)=>{
     // const refreshToken = req.cookie.refreshToken;
     try{
@@ -160,6 +165,36 @@ const refresh = (req, res, next)=>{
     }
 }
 
+const updateUser = async(req, res, next) =>{
+    try{
+        const {id} = req.body;
+        const data = req.body;
+        if(data.confirmPassword){
+           const isPasswordValid = await userModel.checkUserPassword(data.id, data.confirmPassword);
+           if(!isPasswordValid){
+            return res.status(400).json({
+                status: "error",
+                statusCode: 400,
+                message: "Invalid Password"
+            });
+           }
+        }
+        const response = await userModel.updateUser(id, data);
+        res.status(200).json({
+            status : "success",
+            statusCode : 200,
+            message : "User Updated",
+            data: response
+    });
+    }
+    catch(error){
+        console.log(error.message);
+        error.status = error.status || 500;
+        next(error);
+    }
+}
+
+// logout function
 const logout = (req, res) =>{
     res.clearCookie('refreshToken',{
             httpOnly: true,
@@ -173,4 +208,4 @@ const logout = (req, res) =>{
     return res.status(200).json({ message: 'Logged out successfully' });
 }
 
-module.exports = {addProfilePicture, registerUser, loginUser, getAllUsers,userDashboard, deleteUser, getUser, refresh,logout}
+module.exports = {updateUser, addProfilePicture, registerUser, loginUser, getAllUsers,userDashboard, deleteUser, getUser, refresh,logout}

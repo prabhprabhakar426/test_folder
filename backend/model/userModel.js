@@ -4,6 +4,7 @@ const AppError = require('../error/AppError')
 const bcrypt = require('bcrypt');
 const salt = 10;
 
+// user registration function
 async function addNewUser(req){
     try{
         const {name, email, password, role = 'USER'} = req.body;
@@ -21,6 +22,7 @@ async function addNewUser(req){
     }
 }
 
+// user login function
 async function checkUserLogin(req){
     try{
         const {email, password} = req.body;
@@ -52,6 +54,25 @@ async function checkUserLogin(req){
     }
 }
 
+// check password for given user id for protected operations
+async function checkUserPassword(id, password){
+    try{
+        const query = "SELECT password from user_table WHERE id = ?"
+        const [rows] = await db.query(query, [id]);
+        if (rows.length === 0) {
+            throw new AppError(404, 'BUSINESS', 'User Not Found')
+        }
+        const storedHashedPassword = rows[0].password;
+        const match = await bcrypt.compare(password, storedHashedPassword);
+        return match;
+    }
+    catch(error){
+        console.log(error.message);
+        throw error;
+    }
+}
+
+// fetch all users function
 async function allUsers(email){
     try{
         const query = 'SELECT id, name, email FROM user_table WHERE email <> ?';
@@ -65,6 +86,7 @@ async function allUsers(email){
     }
 }
 
+// fetch user by id function
 async function getUserById(id){
     try{
         const query = 'SELECT  id, name, email, role, createdOn, profilePath FROM user_table WHERE id = ?';
@@ -78,6 +100,7 @@ async function getUserById(id){
     }
 }
 
+// total users count function
 async function totalUsersCount(){
     try{
         const query = 'SELECT COUNT(id) as TotalUsers FROM user_table'
@@ -90,6 +113,48 @@ async function totalUsersCount(){
     }
 }
 
+// user update function
+async function updateUser(id, data){
+    try{
+        console.log(id + ' user model')
+        // console.log(req)
+        const found = await getUserById(id);
+        console.log('after getUserById  ', found)
+        if(found === undefined){
+            throw new AppError(404,'BUSINESS', " User Not Found");
+        }
+
+        const columnsInTable = ['name', 'password', 'email'];
+        const columnData = data;
+        const columnToUpdate = [];
+        const values = [];
+
+        for(const column of columnsInTable){
+            if(columnData[column] !== undefined){
+                columnToUpdate.push(`${column}=?`);
+                values.push(columnData[column]);
+            }
+        }
+        console.log('values');
+        // console.log(values);
+        if (columnToUpdate.length === 0) {
+            throw new AppError(400, 'BUSINESS', "No Data to Update");
+        }
+        // console.log('values2');
+        values.push(id);
+        const query = `UPDATE user_table SET ${columnToUpdate.join(', ')} WHERE id = ?`;
+        const [rows] = await db.query(query, values);
+        console.log('values3');
+        // console.log(rows.affectedRows);
+        return rows.affectedRows;
+    }
+    catch(error){
+        console.log(error.message , 'user model');
+        throw error;
+    }
+}
+
+// upload profile photo function
 async function uploadProfilePhoto(id, file){
     try{
         const query = 'UPDATE user_table SET profilePath = ? WHERE id = ?';
@@ -102,6 +167,7 @@ async function uploadProfilePhoto(id, file){
     }
 }
 
+// generate JWT token function
 function generateToken(user){
     return jwt.sign(
         {
@@ -115,6 +181,7 @@ function generateToken(user){
     );
 }
 
+// generate refresh token function
 function generateRefreshToken(user){
     return jwt.sign(
         {
@@ -128,6 +195,7 @@ function generateRefreshToken(user){
     );
 }
 
+// delete user by id function
 async function deleteUserById(id){
     try{
         const query = 'DELETE FROM user_table WHERE id = ?';
@@ -140,4 +208,4 @@ async function deleteUserById(id){
     }
 }
 
-module.exports = {uploadProfilePhoto, addNewUser, checkUserLogin, allUsers, totalUsersCount, deleteUserById, getUserById, generateToken}
+module.exports = {checkUserPassword, updateUser, uploadProfilePhoto, addNewUser, checkUserLogin, allUsers, totalUsersCount, deleteUserById, getUserById, generateToken}
