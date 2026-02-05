@@ -2,17 +2,22 @@ const db = require("../config/database");
 const jwt = require('jsonwebtoken');
 const AppError = require('../error/AppError')
 const bcrypt = require('bcrypt');
+const { getUser } = require("../controllers/userController");
 const salt = 10;
 
 // user registration function
 async function addNewUser(req){
     try{
         const {name, email, password, role = 'USER'} = req.body;
+        const emailExists = await getUserByEmail(email);
+        if(emailExists){
+            throw new AppError(409, 'BUSINESS', 'Email already exists')
+        }
         const hasedPassword = await bcrypt.hash(password, salt);
         const query = "INSERT INTO user_table(name, email, password, role, createdOn) values(?, ?, ?, ?, NOW())"
         const [result] = await db.query(query, [name, email, hasedPassword, role, ]);
         if(result.affectedRows === 0){
-            throw new AppError(400, 'BUSINESS', 'Adding New User Failed')
+            throw new AppError(409, 'BUSINESS', 'Adding New User Failed')
         }
         return result[0];
     }
@@ -99,6 +104,25 @@ async function getUserById(id){
         throw error;
     }
 }
+
+async function getUserByEmail(email){
+    try{
+        const query = 'SELECT  id, name, email, role, createdOn FROM user_table WHERE email = ?';
+        const [rows] = await db.query(query,[email]);
+        // console.log(rows)
+        if(rows.length === 0){
+            return false;
+        }
+        else {
+            return true
+        }
+    }
+    catch(error){
+        console.log('fetch user by email error ' + error.message);
+        throw error;
+    }
+}
+
 
 // total users count function
 async function totalUsersCount(){

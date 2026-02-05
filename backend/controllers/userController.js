@@ -11,7 +11,7 @@ const registerUser = async(req, res, next)=>{
     try{console.log(req.body);
         await validator(req.body);
         console.log('body: '+req.body);
-        const response = await userModel.addNewUser(req);
+        const response = await userModel.addNewUser(req)
         res.status(201).json({
                 status : "success",
                 statusCode : 201,
@@ -20,7 +20,7 @@ const registerUser = async(req, res, next)=>{
         });
     }
     catch(error){
-        console.log(error.message);
+        console.log('register user error: ', error.message);
         error.status = error.status || 500;
         next(error);
     }

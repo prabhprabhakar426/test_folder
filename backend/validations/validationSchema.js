@@ -2,10 +2,27 @@ const Joi = require("joi");
 
 // schema for Create API
 const schemaSignUp = Joi.object({
-    name : Joi.string().regex(/^[a-zA-Z ]+$/).min(4).max(20).required(),
-    email: Joi.string().email().required(),
-    password : Joi.string().required(),
-    role : Joi.string()
+    name : Joi.string().trim().regex(/^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+$/).min(4).max(20).required().messages({
+        'string.pattern.base': 'Name must include uppercase, lowercase letters',
+        'string.min': 'name length min 4, max 20 characters',
+        'string.max': 'name length min 4, max 20 characters',
+        'string.empty': 'required field',
+        'any.required': 'name is required',
+    }),
+    email: Joi.string().email().required().messages({
+        'string.email': 'Invalid email format',
+        'string.empty': 'required field',
+        'any.required': 'email is required',
+    }),
+    password : Joi.string().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/).min(8).required().messages({
+        'string.pattern.base': 'Password must include uppercase, lowercase and a number',
+        'any.required': 'password is required',
+        'string.min': 'password length more than 8 characters',
+        'string.empty': 'required field'
+    }),
+    role : Joi.string().valid('USER', 'MANAGER').messages({
+        'any.only': 'role must be either USER or MANAGER'
+    })
 });
 // validator for Create API
 const validator =(payload) =>{

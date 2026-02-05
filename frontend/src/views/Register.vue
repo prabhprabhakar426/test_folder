@@ -1,6 +1,7 @@
 <template>
     <div>
-        <RegisterForm @add-new-user="addStaff"></RegisterForm>
+        <RegisterForm @add-new-user="addStaff" :error="error"></RegisterForm>
+        
     </div>
 </template>
 
@@ -11,6 +12,11 @@ import axios from 'axios';
 
 export default {
   name: 'RegisterPage',
+  data(){
+    return {
+      error: {},
+    };
+  },
   components: {
     RegisterForm,
   },
@@ -34,9 +40,13 @@ export default {
             this.$router.push('/login');
           }
       } catch (error) {
-          console.error(
-          error.response?.data?.message || "Registration failed"
-        );
+        console.log('Error response:',error.response);
+        if (error.status === 400 || error.status === 401) {
+          this.error = error.response.data.message;
+          console.log('inside 400 status ',this.error);
+        } else {
+          this.error = { err : error.response.data.message || 'Registeration failed' };
+        }
       }
     }
   },

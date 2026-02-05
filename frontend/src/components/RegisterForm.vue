@@ -5,42 +5,49 @@
       <h2 class="brand" v-if="!canShowRole">Inventory Management</h2>
 
       <h3 class="title">Create an account</h3>
-
+      <p class="error-text" v-if="error.err">{{ error.err }}</p>
       <form @submit.prevent="handleRegister">
 
         <div class="field">
           <input
             type="text"
-            v-model="name"
+            v-model.lazy="name"
             placeholder=" "
             required
             @blur="validateUsername"
           />
           <label>Name</label>
-          <p v-if="usernameError" class="error-text">{{ usernameError }}</p>
+          <p v-if="error.name || usernameError" class="error-text">{{ error.name || usernameError }}</p>
         </div>
 
         <div class="field">
           <input
             type="email"
-            v-model="email"
+            v-model.lazy="email"
             placeholder=" "
             required
             @blur="validateEmail"
 
           />
           <label>Email</label>
-          <p v-if="emailError" class="error-text">{{ emailError }}</p>
+          <p v-if="error.email || emailError" class="error-text">{{ error.email || emailError }}</p>
         </div>
 
         <div class="field">
-          <input
-            type="password"
-            v-model="password"
-            placeholder=" "
-            required
-          />
-          <label>Password</label>
+          <div class="password-wrapper">
+            <input
+              :type="passwordFieldType"
+              v-model.lazy="password"
+              placeholder=" "
+              required
+              @blur="validPassword"
+            />
+            <label>Password</label>
+            <button type="button" class="toggle-btn" @click="toggleShowPassword" :aria-pressed="showPassword">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+          <p v-if="error.password || passwordError" class="error-text">{{ error.password || passwordError }}</p>
         </div>
 
         <div class="field" v-if="canShowRole">
@@ -52,7 +59,7 @@
         </div>
 
         <div class="actions">
-          <button type="submit" class="primary-btn">
+          <button type="submit" :disabled ="checkData()" class="primary-btn">
             Register
           </button>
 
@@ -90,11 +97,18 @@ export default {
       password: "",
       role: "",
       showRole:false,
-      usernameError: '',
-      emailError: ''
+      usernameError: "",
+      emailError: "",
+      passwordError: "",
+      showPassword: false,
     };
   },
-
+  props:{
+    error:{
+      type: Object,
+      default: () => ({})
+    }
+  },
   computed:{
     canShowRole(){
       const role = getRole();
@@ -110,27 +124,67 @@ export default {
       }
       return false;
     },
+    passwordFieldType(){
+      return this.showPassword ? 'text' : 'password';
+    }
   },
+  
   methods: {
     validateUsername(){
-      const regex = /^[a-zA-Z0-9_]{3,20}$/;
+      const regex = /^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+$/;
 
-      if(!regex.test(this.name)){
-        this.usernameError = 'only letter, number allowed & length 3-20'
+      if(!this.name){
+        this.usernameError = 'Name is required';
+      }
+      else if(this.name.length < 4 || this.name.length > 20){
+        this.usernameError = 'Name length min 4, max 20 characters.';
+      }
+      else if(!regex.test(this.name)){
+        this.usernameError = 'Name must include uppercase, lowercase letters';
       }
       else{
-        this.usernameError = '';
+        this.usernameError = "";
       }
+      
     },
     validateEmail(){
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      if(!regex.test(this.email)){
+      if(!this.email){
+        this.emailError = 'Email is required';
+      }
+      else if(!regex.test(this.email)){
         this.emailError = 'Invalid Format';
-      }else{
-        this.emailError = '';
+      }
+      else{
+        this.emailError = "";
       }
     },
+    validPassword(){
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
+
+      if(!this.password){
+        this.passwordError = 'Password is required';
+      }
+      else if(this.password.length < 8){
+        this.passwordError = 'Password must be at least 8 characters long';
+      }
+      else if(!regex.test(this.password)){
+        this.passwordError = 'Password must include uppercase, lowercase and a number';
+      }
+      else{
+        this.passwordError = "";
+      }
+    },
+    toggleShowPassword(){
+      this.showPassword = !this.showPassword;
+    },
+    checkData(){
+      if(this.usernameError || this.emailError || this.passwordError){
+        return true;
+      }
+    return  false;
+  },
     handleRegister() {
       console.log('Name: '+this.name)
       const newStaff = {
@@ -230,6 +284,60 @@ export default {
   color: #1a73e8;
 }
 
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.password-wrapper input {
+  flex: 1;
+}
+
+.password-wrapper label {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  color: #5f6368;
+  font-size: 14px;
+  background: #fff;
+  padding: 0 4px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+.password-wrapper input:focus + label,
+.password-wrapper input:not(:placeholder-shown) + label {
+  top: -12px;
+  font-size: 12px;
+  color: #1a73e8;
+}
+
+.password-wrapper .toggle-btn {
+  position: static;
+  transform: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.password-wrapper .toggle-btn:hover {
+  background: rgba(26, 115, 232, 0.08);
+}
+
+.password-wrapper .toggle-btn:focus {
+  outline: none;
+  background: rgba(26, 115, 232, 0.12);
+}
+
 .actions {
   display: flex;
   justify-content: space-between;
@@ -249,6 +357,12 @@ export default {
 
 .primary-btn:hover {
   background: #1558c0;
+}
+
+.primary-btn:disabled {
+  background: #c5bcbc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .text-btn {
