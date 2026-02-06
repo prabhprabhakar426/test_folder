@@ -4,7 +4,7 @@
 
       <h2 class="brand">Inventory Management</h2>
 
-      <h3 class="title">Sign in</h3>
+      <h3 class="title">Log into your account</h3>
 
       <form @submit.prevent="handleLogin">
 
@@ -30,7 +30,7 @@
 
         <div class="actions">
           <button type="submit" class="primary-btn">
-            Sign in
+            Log in
           </button>
         </div>
 

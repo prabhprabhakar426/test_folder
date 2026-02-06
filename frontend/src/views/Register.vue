@@ -8,7 +8,7 @@
 <script>
 import { getRole } from '@/utils/auth';
 import RegisterForm from '../components/RegisterForm.vue';
-import axios from 'axios';
+import { api } from '@/utils/interceptor';
 
 export default {
   name: 'RegisterPage',
@@ -33,7 +33,7 @@ export default {
     async addStaff(newStaff){
       // console.log(newStaff)
       try {
-          await axios.post('http://localhost:8080/user/register', newStaff)
+          await api.post('/user/register', newStaff)
           if (this.role) {
             this.$router.push('/users');
           } else {

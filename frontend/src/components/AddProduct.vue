@@ -4,31 +4,37 @@
 
       <h3 class="title">Add Product</h3>
       <p class="subtitle">Enter product details</p>
+      <p class="error-text" v-if="error.err">{{ error.err }}</p>
+      <p class="success-text" v-if="success">{{ success }}</p>
 
       <form @submit.prevent="addProduct">
 
         <div class="field">
           <input
             type="text"
-            v-model="product.productName"
+            v-model.lazy="product.productName"
             placeholder=" "
             required
+            @blur="validProductName"
           />
           <label>Product Name</label>
+            <p v-if=" productNameError" class="error-text">{{ productNameError }}</p>
         </div>
 
         <div class="field">
           <input
             type="number"
-            v-model.number="product.price"
+            v-model.number.lazy="product.price"
             placeholder=" "
             required
+            @blur="validprice"
           />
           <label>Price</label>
+          <p v-if=" priceError" class="error-text">{{ priceError }}</p>
         </div>
 
         <div class="field">
-          <select v-model="product.category" required>
+          <select v-model.lazy="product.category" required>
             <option disabled value="">Select category</option>
             <option>Electronics</option>
             <option>Stationary</option>
@@ -42,11 +48,13 @@
         <div class="field">
           <input
             type="number"
-            v-model.number="product.totalStock"
+            v-model.number.lazy="product.totalStock"
             placeholder=" "
             required
+            @blur="validStock"
           />
           <label>Total Stock</label>
+          <p v-if=" stockError" class="error-text">{{ stockError }}</p>
         </div>
 
         <div class="field">
@@ -60,8 +68,8 @@
         </div>
 
         <div class="actions">
-          <button type="submit" class="primary-btn">
-            Save
+          <button type="submit" :disabled="showAddButton()" class="primary-btn">
+            Add Product
           </button>
           <button type="button" class="cancel-btn" @click="goBack">
             Cancel
@@ -90,17 +98,54 @@ import { api } from '../utils/interceptor';
               totalStock:0,
               image: null
           },
-          priceError: '',
-          stockError: ''
+          productNameError: "",
+          priceError: "",
+          stockError: "",
+          error:{
+            type: Object,
+            default: () => ({})
+          },
+          success: "",
       }
     },
     methods:{
-
       onImageChange(event) {
         const file = event.target.files[0]
         this.product.image = file
       },
-      
+      validProductName(){
+        const regex = /^[a-zA-Z0-9\s]+$/;
+        console.log('validating product name');
+        if(!this.product.productName){
+          this.productNameError = 'Product name is required';
+        } else if(!regex.test(this.product.productName)) {
+          this.productNameError = 'Allowed only letters, numbers and spaces';
+        } else {
+          this.productNameError = "";
+        }
+      },
+      validprice(){
+        console.log('validating price');
+        if(!this.product.price || this.product.price <= 0){
+          this.priceError = 'Price cannot be zero or negative';
+        } else {
+          this.priceError = "";
+        }
+      },
+      validStock(){
+        console.log('validating stock');
+        if(!this.product.totalStock || this.product.totalStock <= 0){
+          this.stockError = 'Stock cannot be zero or negative';
+        } else {
+          this.stockError = "";
+        }
+      },
+      showAddButton(){
+        if(this.productNameError || this.priceError || this.stockError){
+          return true;
+        }
+        return false;
+      },
       async addProduct() {
         if (!this.product.productName || 
         !this.product.price || 
@@ -121,11 +166,13 @@ import { api } from '../utils/interceptor';
           //             Authorization: `Bearer ${localStorage.getItem("authTokens")}`
           //           }
           // });
+          setTimeout(() => {
           this.$router.push('/products');
-
+          }, 1500);
+          this.success = "Product added successfully!";
         } catch (error) {
             console.log(error.name, error.message);
-            throw error;
+            this.error = { err : error.response.data.message || 'Registeration failed' };
         }
       },
       goBack(){
@@ -239,6 +286,12 @@ import { api } from '../utils/interceptor';
   background: #1558c0;
 }
 
+.primary-btn:disabled {
+  background: #878baf;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .cancel-btn {
   background: none;
   border: none;
@@ -252,6 +305,80 @@ import { api } from '../utils/interceptor';
 
 .cancel-btn:hover {
   background: rgba(26, 115, 232, 0.08);
+}
+
+.error-text {
+  color: #b71c1c;
+  background: #fdecea;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.success-text {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Fluid, media-query-free responsive tweaks */
+.add-product-card {
+  width: min(92%, 420px);
+  max-width: 100%;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+.title {
+  font-size: clamp(18px, 2.6vw, 20px);
+}
+
+.subtitle {
+  font-size: clamp(13px, 1.8vw, 14px);
+  margin-bottom: clamp(12px, 2.5vw, 24px);
+}
+
+.field input,
+.field select {
+  padding: 12px;
+  font-size: clamp(14px, 2vw, 14px);
+  box-sizing: border-box;
+}
+
+.field label {
+  left: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.primary-btn,
+.cancel-btn {
+  flex: 1 1 140px;
+  min-width: 120px;
+  padding: clamp(8px, 1.8vw, 12px) 12px;
+}
+/* .primary-btn {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+} */
+
+
+
+.error-text {
+  font-size: clamp(12px, 1.6vw, 13px);
 }
 
 </style>
