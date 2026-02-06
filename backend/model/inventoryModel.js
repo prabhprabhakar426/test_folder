@@ -67,13 +67,15 @@ async function addProduct(req){
 async function updateProduct(id, req){
     try{
         console.log(id + ' inven model')
-        console.log(req)
+        console.log('update product : ',req)
+        
         const [found] = await getProduct(id);
         if(found === undefined){
             throw new AppError(404,'BUSINESS', " Product Not Found");
         }
 
-        const columnsInTable = ['productName', 'price', 'category', 'totalStock', 'status'];
+        req.productImage = req.file ? req.file.filename : undefined;
+        const columnsInTable = ['productName', 'price', 'category', 'totalStock', 'status', 'productImage'];
         const columnData = req;
         const columnToUpdate = [];
         const values = [];

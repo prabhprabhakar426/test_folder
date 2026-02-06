@@ -13,7 +13,7 @@ router.get('/get/:id',verifyToken, get);
 
 router.post('/add',verifyToken, authorizeRole('ADMIN', 'MANAGER'),upload.single('productImage'), add);
 
-router.put('/update/',verifyToken,authorizeRole('ADMIN', 'MANAGER'), update);
+router.put('/update/',verifyToken,authorizeRole('ADMIN', 'MANAGER'),upload.single('image'), update);
 
 router.delete('/delete/', verifyToken, authorizeRole('ADMIN'), remove);
 

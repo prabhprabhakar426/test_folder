@@ -4,6 +4,8 @@
 
       <h3 class="title">Update Product</h3>
       <p class="subtitle">Product Details</p>
+      <p class="error-text" v-if="error.err">{{ error.err }}</p>
+      <p class="success-text" v-if="success">{{ success }}</p>
 
       <form @submit.prevent="confirmUpdate">
 
@@ -11,10 +13,12 @@
           <span>Change Product Name</span>
           <input
             type="text"
-            v-model.trim="product.updatedName"
+            v-model.lazy.trim="product.updatedName"
             placeholder="Enter new name"
             required
+            @blur="validProductName"
           />
+          <p v-if="productNameError" class="error-text">{{ productNameError }}</p>
         </div>
 
         <div class="field">
@@ -26,7 +30,7 @@
             required
             @blur="validPrice"
           />
-          <p v-if="priceError">{{ priceError }}</p>
+          <p v-if="priceError" class="error-text">{{ priceError }}</p>
         </div>
 
         <div class="field">
@@ -38,11 +42,20 @@
             placeholder="Enter new stocks"
             required
           />
-          <p v-if="stockError">{{ stockError }}</p>
+          <p v-if="stockError" class="error-text">{{ stockError }}</p>
+        </div>
+
+        <div class="field">
+          <input
+            type="file"
+            accept="image/*"
+            @change="onImageChange"
+          />
+          <label>Select New Image</label>
         </div>
 
         <div class="actions">
-          <button type="submit" class="primary-btn">
+          <button type="submit" :disabled="checkData()" class="primary-btn">
             Update
           </button>
           <button type="button" class="cancel-btn" @click="goBack">
@@ -68,10 +81,14 @@ export default{
             product:{
               updatedName:'',
               updatedPrice:0,
-              updatedTotalStock:0
+              updatedTotalStock:0,
+              newImage: null
             },
-            priceError:'',
-            stockError: ''
+            productNameError:"",
+            priceError:"",
+            stockError: "",
+            error:{},
+            success: "",  
         }
     },
     mounted(){
@@ -97,29 +114,63 @@ export default{
       goBack(){
         this.$router.push({name: 'ProductList'});
     },
+    validProductName(){
+        const regex = /^[a-zA-Z0-9\s]{7,}$/;
+        console.log('validating product name');
+        if(!this.product.updatedName){
+          this.productNameError = 'product name is required';
+        } 
+        else if(this.product.updatedName.length < 7) {
+          this.productNameError = 'product name is too short min 7 characters';
+        }
+        else if(!regex.test(this.product.updatedName)) {
+          this.productNameError = 'product name only letters, numbers and spaces';
+        } else {
+          this.productNameError = "";
+        }
+      },
     validPrice(){
-      if (this.product.updatedPrice == null || this.product.updatedPrice <= 0) {
-      this.priceError = 'Price must be a positive number';
-      this.product.updatedPrice = this.priceLabel; // optional reset
-    } else {
+      if (!this.product.updatedPrice) {
+      this.priceError = 'Price is required';
+    } else if(this.product.updatedPrice <= 0){
+      this.priceError = 'Price cannot be zero or negative';
+      this.product.updatedPrice = 0; // optional reset
+    }
+    else {
       this.priceError = '';
     }
     },
     validStock(){
-      if (this.product.updatedTotalStock == null || this.product.updatedTotalStock <= 0) {
-        this.stockError = 'Stock must be a positive number';
-        this.product.updatedTotalStock = this.stockLabel; // optional reset
-      } else {
+      if (!this.product.updatedTotalStock) {
+        this.stockError = 'Stock is required';
+        this.product.updatedTotalStock = 0; // optional reset
+      } 
+      else if( this.product.updatedTotalStock <= 0){
+        this.stockError = 'Stock cannot be zero or negative';
+        this.product.updatedTotalStock = 0; // optional reset
+      }
+      else {
         this.stockError = '';
       }
     },
+    checkData(){
+      if(this.productNameError || this.priceError || this.stockError){
+        return true;
+      }
+      return false;
+    },
+    onImageChange(event) {
+        const file = event.target.files[0]
+        this.product.image = file
+      },
     async confirmUpdate(){
         try {
             const updatedProduct = {
                 id: this.productId,
                 productName: this.product.updatedName || undefined,
                 price: this.product.updatedPrice > 0? this.product.updatedPrice : undefined,
-                totalStock: this.product.updatedTotalStock >0? this.product.updatedTotalStock : undefined
+                totalStock: this.product.updatedTotalStock >0? this.product.updatedTotalStock : undefined,
+                image: this.product.image || undefined
             }
             console.log('Update Product ', updatedProduct);
             const response = await api.put('/inventory/update/', updatedProduct);
@@ -131,11 +182,14 @@ export default{
             // });
             console.log(response);
             if(response){
-                alert('Product is Updated')
-                this.$router.push({name:'ProductList'})
+                this.success = "Product is Updated";
+                setTimeout(()=>{
+                  this.$router.push({name:'ProductList'})
+                },1500);
             }
         } catch (error) {
             console.log(error.message);
+            this.error = { err : error.response.data.message || 'Update failed' };
         }
     }
     
@@ -239,6 +293,12 @@ export default{
   background: #1558c0;
 }
 
+.primary-btn:disabled {
+  background: #c5bcbc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .cancel-btn {
   background: none;
   border: none;
@@ -252,6 +312,23 @@ export default{
 
 .cancel-btn:hover {
   background: rgba(26, 115, 232, 0.08);
+}
+
+.error-text {
+  color: #b71c1c;
+  background: #fdecea;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.success-text {
+  color: #1b5e20;
+  background: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 6px;
 }
 
 </style>
