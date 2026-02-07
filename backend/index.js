@@ -12,7 +12,7 @@ const path = require("path");
 //passing all the methods to variable 'app'
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000' , 'http://192.168.1.209:3000']
+const allowedOrigins = ['http://localhost:3000' , 'http://192.168.1.209:3000', 'http://10.97.244.9:3000']
 
 const corsOption = {
     origin: function (origin, callback) {
