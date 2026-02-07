@@ -36,7 +36,7 @@ async function checkUserLogin(req){
         const [rows] = await db.query(query, [email]);
         
         if (rows.length === 0) {
-            throw new AppError(404, 'BUSINESS', 'User Not Found')
+            throw new AppError(400, 'BUSINESS', 'email does not exist')
         }
         const user = rows[0];
         const storedHashedPassword = rows[0].password;
@@ -50,7 +50,8 @@ async function checkUserLogin(req){
             };
         }
         else{
-            throw new AppError(401, 'AUTHENTICATION', 'Password Mismatch')
+            const error = new AppError(400, 'AUTHENTICATION', 'wrong password try again!');
+            throw error;
         }
     }
     catch(error){

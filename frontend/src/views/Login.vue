@@ -1,6 +1,6 @@
 <template>
   <div>
-    <login-form @checkCredentials="validateLogin"></login-form>
+    <login-form @checkCredentials="validateLogin" :error="error"></login-form>
   </div>
 </template>
 
@@ -11,6 +11,11 @@ import { api } from '@/utils/interceptor';
 
 export default {
   name: 'LoginPage',
+  data(){
+    return {
+      error: {},
+    };
+  },
   components: {
     LoginForm,
   },
@@ -28,7 +33,12 @@ export default {
         localStorage.setItem("authTokens",result.data.accessToken);
         this.$router.push({name:'Home'});
       } catch (error) {
-        console.error(error.message)
+        console.error(error)
+        if (error.response.status === 400) {
+           this.error = { err : error.response.data.message};
+        } else {
+          this.error = { err : 'Login failed' };
+        }
       }
     }
   },

@@ -74,7 +74,7 @@
 
         <p class="login-text" v-if="!(canShowLogin || canShowRole)">
           Already have an account?
-          <span @click="$router.push('/login')">Sign in</span>
+          <span @click="$router.push('/login')">Sign Up</span>
         </p>
 
       </form>

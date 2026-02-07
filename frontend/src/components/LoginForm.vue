@@ -4,7 +4,8 @@
 
       <h2 class="brand">Inventory Management</h2>
 
-      <h3 class="title">Sign in</h3>
+      <h3 class="title">Log into your account</h3>
+      <p class="error-text" v-if="error.err">{{ error.err }}</p>
 
       <form @submit.prevent="handleLogin">
 
@@ -30,7 +31,7 @@
 
         <div class="actions">
           <button type="submit" class="primary-btn">
-            Sign in
+            Log in
           </button>
         </div>
 
@@ -52,7 +53,13 @@ export default{
         return {
             email:'',
             password:''
-        }
+        };
+    },
+    props:{
+          error:{
+            type: Object,
+            default: () => ({})
+          },
     },
     methods:{
       handleLogin(){
@@ -176,6 +183,15 @@ export default{
   color: #1a73e8;
   cursor: pointer;
   font-weight: 500;
+}
+
+.error-text {
+  color: #b71c1c;
+  background: #fdecea;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 6px;
 }
 
 </style>>

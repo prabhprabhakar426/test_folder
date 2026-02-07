@@ -198,8 +198,8 @@ const updateUser = async(req, res, next) =>{
 const logout = (req, res) =>{
     res.clearCookie('refreshToken',{
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/'
         });
 
