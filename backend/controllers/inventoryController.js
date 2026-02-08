@@ -88,7 +88,7 @@ const remove = async(req, res, next) =>{
         
         console.log(req.body.id)
         const {id} = req.body;
-        const response = await inventoryModel.removeProduct(id)
+        const response = await inventoryModel.removeProduct(id, req)
         res.status(200).json({
                 status : "success",
                 statusCode : 200,

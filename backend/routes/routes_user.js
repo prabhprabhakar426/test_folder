@@ -2,7 +2,7 @@ const express = require('express');
 const { updateUser, registerUser, loginUser, getAllUsers, userDashboard, deleteUser, getUser, refresh, logout, addProfilePicture} = require('../controllers/userController');
 const { verifyToken } = require('../middleware/jwtAuthenticate');
 const { authorizeRole } = require('../middleware/roleMiddleware');
-const upload = require('../middleware/photoUploads');
+const {upload} = require('../middleware/photoUploads');
 
 
 // router object

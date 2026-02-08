@@ -1,5 +1,6 @@
 const db = require("../config/database");
 const AppError = require('../error/AppError');
+const {deleteImage} = require('../middleware/photoUploads');
 
 async function getAllProducts(req){
     try{
@@ -15,10 +16,10 @@ async function getAllProducts(req){
 
 async function getProduct(id){
     try{
-        const query = "SELECT productName, price, category, totalStock FROM inventory WHERE id = ? LIMIT 1";
+        const query = "SELECT productName, price, category, totalStock, productImage FROM inventory WHERE id = ? LIMIT 1";
         const [rows] = await db.query(query,[id]);
         if(!rows || rows.length === 0){
-            throw new AppError(404,'BUSINESS', 'User Not Found')
+            throw new AppError(404,'BUSINESS', 'Product Not Found')
         }
         return rows;
     }
@@ -105,17 +106,24 @@ async function updateProduct(id, req){
     }
 }
 
-async function removeProduct(id){
+async function removeProduct(id, req){
 
     try{
         console.log(id)
+        const product = await getProduct(id);
+        console.log('file name: ', product);
+        const fileName = product[0].productImage;
+        console.log('file name: ', fileName);
+        // delete the image of the product
+        await deleteImage(req,fileName);
+
         const query = "DELETE FROM inventory WHERE id =?";
         const [rows] = await db.query(query, [id]);
-        if(rows.affectedRow === 0){
+        if(rows.affectedRows === 0){
             throw new AppError(400, 'BUSINESS', "Product Not Found");
         }
-        console.log(rows.affectedRow);
-        return rows.affectedRow;
+        console.log('remove product: ',rows.affectedRows);
+        return rows.affectedRows;
     }
     catch(error){
         console.log(error.message);

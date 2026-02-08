@@ -2,7 +2,7 @@ const express = require('express');
 const {getAll, get, add, update, remove, adminDashboard, managerDashboard, getImage} = require('../controllers/inventoryController');
 const { verifyToken } = require('../middleware/jwtAuthenticate');
 const { authorizeRole } = require('../middleware/roleMiddleware');
-const upload = require('../middleware/photoUploads');
+const {upload} = require('../middleware/photoUploads');
 
 // router object
 const router = express.Router();
