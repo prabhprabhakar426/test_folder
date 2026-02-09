@@ -43,6 +43,7 @@
           class="card"
           v-for="product in filteredProducts"
           :key="product.id"
+          @click="showProduct(product)"
         >
           <!-- Product Image -->
           <img
@@ -88,6 +89,41 @@
         No Product Found
       </p>
 
+
+      <div v-if="showDetail" class="product-details-overlay">
+  
+
+  <div class="product-card">
+    <h3 class="product-title">Product Details</h3>
+    <img
+      :src="(productDetails && productDetails.productImage) || defaultImage"
+      alt="product"
+      class="product-card-img"
+    />
+
+    <div class="product-card-body">
+      <strong class="product-card-title">
+        {{ productDetails.productName }}
+      </strong>
+
+      <div class="product-card-info">
+        Price: ₹ {{ productDetails.price }}
+      </div>
+
+      <div class="product-card-info">
+        Stock: {{ productDetails.totalStock }}
+      </div>
+    </div>
+
+    <div class="product-card-actions">
+      <button class="btn-cancel" @click="cancelDetails">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+
       <!-- Delete confirmation modal (minimal) -->
       <div v-if="showDeleteModal" class="simple-overlay">
         <div class="simple-modal">
@@ -118,7 +154,8 @@ import { api } from '../utils/interceptor'
 
 export default {
   name: 'ProductList',
-  components: { NavbarComp },
+  components: { NavbarComp,
+  },
 
   data() {
     return {
@@ -127,7 +164,7 @@ export default {
         price:"",
         category:"",
         totalStock:"",
-        productImage: "/productImage_1769671201716.jfif"
+        productImage: ""
       },
       showAddForm: false,
       products: [],
@@ -140,7 +177,10 @@ export default {
       // delete modal state
       showDeleteModal: false,
       productToDelete: null,
-      deleting: false
+      deleting: false,
+      productDetails: null,
+      showDetail: false
+
     };
   },
   watch:{
@@ -275,6 +315,14 @@ export default {
         quantity: product.totalStock
       }
       this.$router.push({name:'ProductUpdateForm', query})
+    },
+    showProduct(product){
+      this.productDetails = product;
+      this.showDetail = true;
+    },
+    cancelDetails(){
+      this.productDetails = null;
+      this.showDetail = false;
     },
     
   }
@@ -690,6 +738,58 @@ export default {
 /* Disabled option look */
 .field select option[disabled] {
   color: #999;
+}
+
+.product-details-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(2, 6, 23, 0.45);
+  z-index: 1000;
+}
+
+.product-details-overlay h3 {
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.product-card {
+  width: 340px;
+  background: #fff;
+  border-radius: 10px;
+  border: #088dc2 solid 2px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+.product-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.product-card-body {
+  padding: 14px;
+}
+
+.product-card-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.product-card-info {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.product-card-actions {
+  padding: 12px;
+  text-align: right;
 }
 
 
