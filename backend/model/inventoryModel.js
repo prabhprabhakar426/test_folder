@@ -50,7 +50,7 @@ async function addProduct(req){
     try{
         const {productName, price, category, totalStock} = req.body;
         const image = req.file;
-        console.log('image Path: ', image)
+        console.log('image Path: ', req);
         const query = "INSERT INTO inventory(productName, price, category, totalStock, productImage, createdOn, updatedOn) values(?, ?, ?, ?, ?, NOW(), NOW())";
         const result = await db.query(query, [productName, price, category, totalStock, image.filename]);
 

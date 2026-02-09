@@ -92,36 +92,35 @@
 
       <div v-if="showDetail" class="product-details-overlay">
   
+        <div class="product-card">
+          <h3 class="product-title">Product Details</h3>
+          <img
+            :src="(productDetails && productDetails.productImage) || defaultImage"
+            alt="product"
+            class="product-card-img"
+          />
 
-  <div class="product-card">
-    <h3 class="product-title">Product Details</h3>
-    <img
-      :src="(productDetails && productDetails.productImage) || defaultImage"
-      alt="product"
-      class="product-card-img"
-    />
+          <div class="product-card-body">
+            <strong class="product-card-title">
+              {{ productDetails.productName }}
+            </strong>
 
-    <div class="product-card-body">
-      <strong class="product-card-title">
-        {{ productDetails.productName }}
-      </strong>
+            <div class="product-card-info">
+              Price: ₹ {{ productDetails.price }}
+            </div>
 
-      <div class="product-card-info">
-        Price: ₹ {{ productDetails.price }}
+            <div class="product-card-info">
+              Stock: {{ productDetails.totalStock }}
+            </div>
+          </div>
+
+          <div class="product-card-actions">
+            <button class="btn-cancel" @click="cancelDetails">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div class="product-card-info">
-        Stock: {{ productDetails.totalStock }}
-      </div>
-    </div>
-
-    <div class="product-card-actions">
-      <button class="btn-cancel" @click="cancelDetails">
-        Close
-      </button>
-    </div>
-  </div>
-</div>
 
 
       <!-- Delete confirmation modal (minimal) -->
@@ -209,6 +208,7 @@ export default {
       
       if(this.selectedCategory){
         console.log('category methods ',products)
+        // filtering the products based on category
         products =  products.filter(product =>
           product.category === this.selectedCategory
         );

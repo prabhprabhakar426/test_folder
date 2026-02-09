@@ -111,7 +111,8 @@ import { api } from '../utils/interceptor';
     methods:{
       onImageChange(event) {
         const file = event.target.files[0]
-        this.product.newImage = file
+        this.product.image = file;
+        console.log('Selected image:', file) // Debug log to verify the selected file
       },
       validProductName(){
         const regex = /^[a-zA-Z0-9\s]+$/;
