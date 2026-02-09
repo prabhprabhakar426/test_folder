@@ -65,4 +65,16 @@ const deliver = async(req, res, next) => {
     }
 }
 
-module.exports = {pending, Orders, userOrders, orderProduct, deliver}
+const cancel = async(req, res, next) =>{
+    try{
+        const order = req.body;
+        const response = await ordersModel.cancelProduct(order);
+        res.status(200).json({message: 'Order Cancelled'})
+    }
+    catch(error){
+        console.log('cancel order ', error.message);
+        next(error);
+    }
+}
+
+module.exports = {pending, Orders, userOrders, orderProduct, deliver, cancel}

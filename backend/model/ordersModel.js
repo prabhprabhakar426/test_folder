@@ -115,4 +115,17 @@ async function deliverProduct(order){
     }
 }
 
-module.exports = {allPendingOrders, allUserDashboard, totalRevnue, allUserOrders, allOrders, buyProduct, deliverProduct}
+async function cancelProduct(order){
+    try{
+        const query = "UPDATE orders SET status = 'CANCELLED' where id = ?";
+        const [rows] = await db.query(query,[order.id]);
+        if(rows.affectedRow === 0){
+            throw new AppError(400, 'BUSINESS', 'Cancel Order Failed')
+        }
+    }catch(error){
+        console.log('cancel model', error.message);
+        throw error;
+    }
+}
+
+module.exports = {allPendingOrders, allUserDashboard, totalRevnue, allUserOrders, allOrders, buyProduct, deliverProduct, cancelProduct}

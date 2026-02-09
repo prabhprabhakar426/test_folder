@@ -161,7 +161,7 @@ export default {
 .bordered-table {
   border-radius: 18px;
   overflow: hidden;
-  border: 3px solid #38bdf8;
+  border: 3px solid #588396;
   box-shadow: 0 4px 24px rgba(99,102,241,0.10);
   background: #f8fafc;
   width: 100%;
@@ -191,7 +191,7 @@ export default {
 }
 .bordered-table tbody tr:hover {
   background: #c7d2fe;
-  transition: background 0.18s;
+  transition: background 0.10s;
 }
 .bordered-table td {
   color: #3730a3;
@@ -231,10 +231,10 @@ export default {
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(99,102,241,0.04);
   padding: 0 10px;
-  border: 1.5px solid #e0e7ff;
+  border: 1.5px solid #8b92aa;
   min-width: 220px;
   flex: 1 1 220px;
-  max-width: 320px;
+  max-width: 280px;
 }
 .search-icon {
   color: #6366f1;

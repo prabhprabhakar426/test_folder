@@ -1,5 +1,5 @@
 const express = require('express');
-const { pending, Orders, userOrders, orderProduct, deliver} = require('../controllers/ordersController');
+const { pending, Orders, userOrders, orderProduct, deliver, cancel} = require('../controllers/ordersController');
 const { verifyToken } = require('../middleware/jwtAuthenticate');
 const { authorizeRole } = require('../middleware/roleMiddleware');
 
@@ -16,6 +16,7 @@ router.post('/orderProduct', verifyToken, orderProduct);
 
 router.put('/deliver', verifyToken, authorizeRole('ADMIN', 'MANAGER'), deliver)
 
+router.put('/cancel', verifyToken, authorizeRole('ADMIN', 'MANAGER'), cancel)
 
 
 

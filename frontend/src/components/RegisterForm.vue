@@ -131,7 +131,7 @@ export default {
   
   methods: {
     validateUsername(){
-      const regex = /^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+$/;
+      const regex = /^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+(?: [A-Za-z]+)?$/;
 
       if(!this.name){
         this.usernameError = 'Name is required';
@@ -140,7 +140,7 @@ export default {
         this.usernameError = 'Name length min 4, max 20 characters.';
       }
       else if(!regex.test(this.name)){
-        this.usernameError = 'Name must include uppercase, lowercase letters';
+        this.usernameError = 'Invalid Name format';
       }
       else{
         this.usernameError = "";
@@ -154,7 +154,7 @@ export default {
         this.emailError = 'Email is required';
       }
       else if(!regex.test(this.email)){
-        this.emailError = 'Invalid Format';
+        this.emailError = 'Invalid Email Format';
       }
       else{
         this.emailError = "";

@@ -2,8 +2,8 @@ const Joi = require("joi");
 
 // schema for Create API
 const schemaSignUp = Joi.object({
-    name : Joi.string().trim().regex(/^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+$/).min(4).max(20).required().messages({
-        'string.pattern.base': 'Name must include uppercase, lowercase letters',
+    name : Joi.string().trim().regex(/^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+(?: [A-Za-z]+)?$/).min(4).max(20).required().messages({
+        'string.pattern.base': 'Invalid name format',
         'string.min': 'name length min 4, max 20 characters',
         'string.max': 'name length min 4, max 20 characters',
         'string.empty': 'required field',

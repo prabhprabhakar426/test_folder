@@ -39,12 +39,21 @@
           <td>{{ order.totalPrice }}</td>
           <td>{{ order.status }}</td>
           <td class="center" v-if="showAction()">
-            <button v-if="canDeliver(order.status)" 
+            <div class="button-row">
+              <button v-if="canDeliver(order.status)" 
                     class="deliver" 
                     @click="deliver(order)"
             >
               Deliver
             </button>
+            <button v-if="canDeliver(order.status)" 
+                    class="cancel" 
+                    @click="cancel(order)"
+            >
+              Cancel
+            </button>
+            </div>
+            
           </td>
         </tr>
 
@@ -58,7 +67,7 @@
 
 <script>
 import { menuItems } from '@/utils/global';
-import axios from 'axios';
+// import axios from 'axios';
 import NavbarComp from './NavbarComp.vue';
 import { getRole, getUserId } from '@/utils/auth';
 import { api } from '../utils/interceptor'
@@ -101,14 +110,6 @@ import { api } from '../utils/interceptor'
                     }else{
                         const userId = getUserId();
                         response = await api.get('/orders/userOrders',{ params:{id: userId}});
-                        // response = await axios.get('http://localhost:8080/orders/userOrders', {
-                        //     params:{
-                        //         id: userId
-                        //     },
-                        //     headers:{
-                        //     Authorization: `Bearer ${localStorage.getItem("authTokens")}`
-                        //   }
-                        // });
                     }
                     this.orders = response.data;
                 }
@@ -120,17 +121,27 @@ import { api } from '../utils/interceptor'
             async deliver(order){
                 try {
                     console.log(order,' order Id')
-                    const response = await axios.put('http://localhost:8080/orders/deliver',order,
-                    {
-                      headers:{
-                        Authorization: `Bearer ${localStorage.getItem("authTokens")}`
-                      }
-                    })
+                    const response = await api.put('/orders/deliver',order);
                     if(response){
                         alert('Product delivered')
                         await this.fetchAllOrders(); 
                     }else{
                         alert('Product not delivered')
+                    }
+                } catch (error) {
+                    console.log(error.message);
+                    throw error;
+                }
+            },
+            async cancel(order){
+                try {
+                    console.log(order,' order Id')
+                    const response = await api.put('/orders/cancel',order);
+                    if(response){
+                        alert('Product cancelled')
+                        await this.fetchAllOrders(); 
+                    }else{
+                        alert('Product not cancelled')
                     }
                 } catch (error) {
                     console.log(error.message);
@@ -194,6 +205,7 @@ import { api } from '../utils/interceptor'
   border-bottom: 1px solid #e0e7ff;
 }
 .bordered-table td.center {
+  width: 10%;
   text-align: center;
 }
 .bordered-table th:first-child, .bordered-table td:first-child {
@@ -264,27 +276,6 @@ thead {
   background: linear-gradient(90deg, #1e3a8a, #2563eb);
 }
 
-/* Column widths */
-/* thead th:nth-child(1),
-tbody td:nth-child(1) {
-  width: 10%;   
-}
-
-thead th:nth-child(2),
-tbody td:nth-child(2) {
-  width: 30%;  
-}
-
-thead th:nth-child(3),
-tbody td:nth-child(3) {
-  width: 40%;   
-}
-
-thead th:nth-child(4),
-tbody td:nth-child(4) {
-  width: 20%;   
-} */
-
 thead th {
   padding: 12px;
   font-size: 14px;
@@ -322,18 +313,37 @@ tbody tr:last-child td {
   border-bottom: none;
 }
 
+.button-row{
+  display:flex;
+  gap: 10px;
+}
+
 .deliver {
   background:  #5edf7a;
   color: white;
-  border: none;
+  border: 1px solid rgb(0, 0, 0);
   padding: 6px 10px;
   cursor: pointer;
   border-radius: 6px;
   font-weight: 600;
+  
 }
 
 .deliver:hover {
   background: #18eb46;
+}
+
+.cancel { 
+  background:#dd452a;
+  color : white;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.cancel:hover{
+  background: #c91b0a;
 }
 
 </style>

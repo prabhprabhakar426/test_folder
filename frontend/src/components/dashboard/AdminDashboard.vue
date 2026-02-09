@@ -31,11 +31,11 @@ export default {
   data() {
     return {
       cards: {
-         "totalProducts":0,
-          "totalUsers": 0,
-          "lowStock": 0,
-          "pendingOrders": 0,
-          "totalRevenue": 0
+         totalProducts:0,
+          totalUsers: 0,
+          lowStock: 0,
+          pendingOrders: 0,
+          totalRevenue: 0
       },
       menuItems : []
 //       menuItems: [
@@ -142,7 +142,7 @@ export default {
 /* Grid Layout */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 2fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 2fr));
   gap: 20px;
 }
 

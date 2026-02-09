@@ -304,10 +304,10 @@ export default {
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(99,102,241,0.04);
   padding: 0 10px;
-  border: 1.5px solid #e0e7ff;
+  border: 1.5px solid #7b8297;
   min-width: 220px;
   flex: 1 1 220px;
-  max-width: 320px;
+  max-width: 280px;
 }
 .search-icon {
   color: #6366f1;
@@ -350,7 +350,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(99,102,241,0.04);
   padding: 0 10px;
-  border: 1.5px solid #e0e7ff;
+  border: 1.5px solid #7e8497;
   min-width: 180px;
   flex: 1 1 180px;
   max-width: 240px;
