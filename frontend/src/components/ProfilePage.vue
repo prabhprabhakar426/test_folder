@@ -183,7 +183,6 @@ import { menuItems } from '@/utils/global';
               if(!file) return;
               this.selectedFile = file;
 
-              // Attempt upload if backend endpoint exists; fail gracefully
               try{
                 const userId = getUserId();
                 const fd = new FormData();

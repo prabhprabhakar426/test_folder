@@ -639,7 +639,8 @@ export default {
   font-weight: 700;
   color: #2563eb;
   margin-bottom: 6px;
-  .card-grid {
+}
+  /* .card-grid {
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 0 2vw;
@@ -658,8 +659,8 @@ export default {
   }
   .price {
     font-size: 15px;
-  }
-}
+  } */
+
 
 
 /* Stock */
