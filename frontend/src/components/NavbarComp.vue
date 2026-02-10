@@ -8,16 +8,21 @@
 
     <!-- Center: Menu -->
     <ul class="nav-links">
-      <li
-        v-for="item in menuItems"
-        :key="item.path"
-        :class="{ active: isActive(item.path) }"
-        @click="goTo(item.path)"
-      >
-        <i :class="item.icon"></i>
-        <span>{{ item.label }}</span>
-      </li>
-    </ul>
+  <li
+    v-for="item in menuItems"
+    :key="item.path"
+  >
+    <router-link
+      :to="item.path"
+      class="nav-item"
+      active-class="active"
+    >
+      <i :class="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </router-link>
+  </li>
+</ul>
+
 
     <!-- Right: Profile + Theme Toggle + Logout -->
     <div class="right-actions">
@@ -140,6 +145,16 @@ export default {
   margin: 0;
 }
 
+.nav-item {
+  display: flex;
+  color: inherit;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s;
+  font-weight: 500;
+}
 .nav-links li {
   cursor: pointer;
   font-size: clamp(12px, 2vw, 16px);
