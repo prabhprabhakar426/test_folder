@@ -173,7 +173,6 @@ export default {
       debounceSearch:"",
       searching: false,
       selectedCategory:"",
-      // delete modal state
       showDeleteModal: false,
       productToDelete: null,
       deleting: false,
