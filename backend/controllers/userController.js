@@ -185,7 +185,7 @@ const updateUser = async(req, res, next) =>{
             statusCode : 200,
             message : "User Updated",
             data: response
-    });
+        });
     }
     catch(error){
         console.log(error.message);

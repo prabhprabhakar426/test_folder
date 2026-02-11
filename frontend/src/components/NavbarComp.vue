@@ -8,10 +8,11 @@
 
     <!-- Center: Menu -->
     <ul class="nav-links">
-  <li
-    v-for="item in menuItems"
-    :key="item.path"
-  >
+    <li
+      v-for="item in menuItems"
+      :key="item.path"
+      :class="{ active: isActive(item.path) }"
+    >
     <router-link
       :to="item.path"
       class="nav-item"
@@ -55,7 +56,8 @@ export default {
   },
   data() {
     return {
-      darkMode: false
+      darkMode: false,
+
     }
   },
   mounted() {
