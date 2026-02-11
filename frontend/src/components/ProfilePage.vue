@@ -22,16 +22,21 @@
       <button class="edit-btn" @click="isNameEditing = true">Edit</button>
     </div>
 
+    <!-- Name Update form -->
     <div>
-      <form v-if="isNameEditing" class="edit-form" @submit.prevent="saveName">
+      <p v-show="error.err" class="error-text">{{ error.err }}</p>
+      <p v-if="editedNameError" class="error-text">{{ editedNameError }}</p>
+      <form v-show="isNameEditing" class="edit-form" @submit.prevent="saveName">
         <input
           type="text"
           v-model="editedName"
           placeholder="Enter new name"
           required
+          @blur="validateName"
         />
+        
         <button type="submit">Save</button>
-        <button type="button" @click="isNameEditing = false">Cancel</button>
+        <button type="button" @click="isNameEditing = false; editNameFormReset()">Cancel</button>
       </form>
     </div>
 
@@ -50,28 +55,36 @@
       <button class="edit-btn" @click="isEmailEditing = true">Edit</button>
     </div>
 
+    <!-- Email Update form -->
     <div>
+      <p v-if="error.err" class="error-text">{{ error.err }}</p>
       <form v-if="isEmailEditing" class="edit-form" @submit.prevent="saveEmail">
         <input
           type="text"
-          v-model="editedEmail"
+          v-model.lazy="editedEmail"
           placeholder="Enter new email"
+          @blur="validateEmail"
           required
         />
+        <p v-if="emailError" class="error-text">{{ emailError }}</p>
         <input
           type="text"
-          v-model="confirmEmail"
+          v-model.lazy="confirmEmail"
           placeholder="confirm email"
           required
+          @blur="checkConfirmEmail"
         />
+        <p v-show="checkConfirmEmail" class="error-text"> {{ confirmEmailError }}</p>
         <input
           type="password"
           v-model="confirmPassword"
           placeholder="confirm password"
           required
         />
-        <button type="submit">Save</button>
-        <button type="button" @click="isEmailEditing = false">Cancel</button>
+        
+        
+        <button type="submit" :disabled="checkEmailData()">Save</button>
+        <button type="button" @click="isEmailEditing = false; editEmailFormReset()">Cancel</button>
       </form>
     </div>
 
@@ -105,9 +118,16 @@ import { menuItems } from '@/utils/global';
                 isNameEditing: false,
                 isEmailEditing: false,
                 editedName:'',
+                editedNameError:'',
                 editedEmail:'',
                 confirmEmail:'',
                 confirmPassword:'',
+                emailError:'',
+                confirmEmailError:'',
+                error:{
+                  trype: Object,
+                  default: () => ({})
+                }
             }
         },
         components:{
@@ -119,6 +139,9 @@ import { menuItems } from '@/utils/global';
         },
         computed:{
             
+        },
+        watch:{
+          
         },
         methods:{
             async fetchProfileData(){
@@ -155,16 +178,21 @@ import { menuItems } from '@/utils/global';
             },
 
             async saveEmail(){
-              const userId = getUserId();
-              const respone = await api.put('/user/update/',{
-                id: userId,
-                email: this.editedEmail,
-                confirmPassword: this.confirmPassword
-              });
-              if(respone && respone.data){
-                this.profile.email = this.editedEmail;
-                this.isEmailEditing = false;
-                alert('Email updated successfully');
+              try {
+                const userId = getUserId();
+                const respone = await api.put('/user/update/',{
+                  id: userId,
+                  email: this.editedEmail,
+                  confirmPassword: this.confirmPassword
+                });
+                if(respone && respone.data){
+                  this.profile.email = this.editedEmail;
+                  this.isEmailEditing = false;
+                  alert('Email updated successfully');
+                }
+              } catch (error) {
+                this.error = { err : error.response.data.message || 'Registeration failed' };
+                console.error('Email update error', error);
               }
             },
 
@@ -173,6 +201,68 @@ import { menuItems } from '@/utils/global';
                 return this.profile.createdOn.split(' ')[0]
               }
               return null;
+            },
+            validateEmail(){
+              const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+              if(!this.editedEmail){
+                this.emailError = 'Email is required';
+              }
+              else if(!regex.test(this.editedEmail)){
+                this.emailError = 'Invalid Email Format';
+              }
+              else{
+                this.emailError = "";
+              }
+            },
+            checkConfirmEmail(){
+              if(this.confirmEmail !== this.editedEmail){
+                this.confirmEmailError = 'email does not match';
+                return true;
+              }
+              else{
+                this.confirmEmailError = '';
+                return false;
+              }
+            },
+            validateName(){
+              const regex = /^(?=.*[A-Z])(?=.*[a-z])[A-Za-z]+(?: [A-Za-z]+)?$/;
+
+              if(!this.editedName){
+                this.editedNameError = 'Name is required';
+              }
+              else if(this.editedName.length < 4 || this.editedName.length > 20){
+                this.editedNameError = 'Name length min 4, max 20 characters.';
+              }
+              else if(!regex.test(this.editedName)){
+                this.editedNameError = 'Invalid Name format';
+              }
+              else{
+                this.editedNameError = "";
+              }
+              
+            },
+            checkEmailData(){
+              if(this.emailError || this.checkConfirmEmail()){
+                return true;
+              }
+              return false;
+            },
+            editEmailFormReset(){
+              console.log('form reset');
+              if(!this.isEmailEditing){
+                this.editedEmail = '';
+                this.confirmEmail = '';
+                this.confirmPassword = '';
+                this.emailError = '';
+                this.confirmEmailError = '';
+              }
+            },
+            editNameFormReset(){
+              if(!this.isNameEditing){
+                this.editedName = '';
+                this.editedNameError = '';
+              }
             },
             onEditPhoto() {
               // trigger the hidden file input
@@ -199,9 +289,11 @@ import { menuItems } from '@/utils/global';
                 // update profile picture to server URL
                 this.profile.profileImage = response.data.url;
                 alert('Photo uploaded successfully');
+                this.$route.push('/profile');
               }
               catch(error){
                 console.error('Upload error', error);
+                this.error = { err : error.response.data.message || 'Registeration failed' };
                 alert('Upload failed');
               }
             }
@@ -387,6 +479,11 @@ body {
 .edit-form button:hover {
   transform: translateY(-2px) scale(1.02);
   filter: brightness(.96);
+}
+
+.error-text{
+  color: #ef4444;
+  font-size: 13px;
 }
 /* Responsive */
 @media (max-width: 600px) {
