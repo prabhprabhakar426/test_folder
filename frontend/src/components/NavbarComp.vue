@@ -15,7 +15,7 @@
     <router-link
       :to="item.path"
       class="nav-item"
-      active-class="active"
+      active-class='active'
     >
       <i :class="item.icon"></i>
       <span>{{ item.label }}</span>
