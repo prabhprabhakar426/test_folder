@@ -2,7 +2,7 @@ const db = require('mysql2/promise')
 
 const config = {
     user : 'root',
-    password : '8056',
+    password : 'root', // root for office lap & personal lap 8056
     database : 'inventory_management',
     host : process.env.HOST,
     port : process.env.PORT,

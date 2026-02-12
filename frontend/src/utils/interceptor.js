@@ -6,15 +6,16 @@ export const api = axios.create({
 });
 
 // Interceptor for Request
-api.interceptors.request.use((config)=> {
-    const token = localStorage.getItem('authTokens');
+api.interceptors.request.use((config)=> 
+    {
+        const token = localStorage.getItem('authTokens');
 
-    if(token){
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log(config)
-    return config;
-},
+        if(token){
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        console.log(config)
+        return config;
+    },
     (error) => Promise.reject(error)
 );
 
